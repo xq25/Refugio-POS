@@ -23,5 +23,5 @@ def orderId(num:str): #Esta funcion es ajustable a la cantidad de productos maxi
     id = ("0"*(3-lenght))+num #(el 3 referencia que puede asignar id hasta 999 productos por cada tipo)
     return id
 
-def encryptString(string):
-    pass
+def encryptString(string:str):
+    hashed = bcrypt.hashpw(string.encode(), bcrypt.gensalt())

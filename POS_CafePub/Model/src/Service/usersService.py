@@ -1,14 +1,15 @@
 from Model.src.Helpers import utils
 import json
+import bcrypt
 
-def getAdminsId():
+def getAdminListId():
     dataBase = utils.getDataBaseUsers()
     adminList = dataBase["4dm1n"].get("id")
     return adminList
 
 def getUserId(user_id):
     data = utils.getDataBaseUsers()  #Base de datos general
-    admins_ids = getAdminsId()  #lista de ids de los admins
+    admins_ids = getAdminListId()  #lista de ids de los admins
     developer = data.get("d3v3l0p3r") #diccionario con la informacion del ingeniero
     only_admins = data.get("4dm1n", []) #Lista de diccionarios con informacion de los administradores 
     only_employees = data.get("general", []) # lista de diccionarios con la informacion de todods los empleados
@@ -18,18 +19,44 @@ def getUserId(user_id):
         return developer
 
     # Buscar entre admins
-    if user_id in admins_ids:
+    elif user_id in admins_ids:
         for admin in only_admins:
             if admin.get("id") == user_id:
                 return admin
 
-    # Buscar entre empleados
-    for employee in only_employees:
-        if employee.get("id") == user_id:
-            return employee
+    else:
+        # Buscar entre empleados
+        for employee in only_employees:
+            if employee.get("id") == user_id:
+                return employee
 
     # Si no se encuentra el usuario
     raise ValueError(f"No se encontró el usuario con el ID: {user_id}")
+
+def getNumUserId(user_id):
+    data = utils.getDataBaseUsers()
+    admins_ids = getAdminListId()  #lista de ids de los admins
+    developer = data.get("d3v3l0p3r") #diccionario con la informacion del ingeniero
+    only_admins = data.get("4dm1n", []) #Lista de diccionarios con informacion de los administradores 
+    only_employees = data.get("general", []) # lista de diccionarios con la informacion de todods los empleados
+
+    # Buscar desarrollador (tiene prioridad si coincide el id)
+    if developer and developer.get("id") == user_id:
+        return 0
+
+    # Buscar entre admins
+    if user_id in admins_ids:
+        for i , admin in enumerate(only_admins):
+            if admin.get("id") == user_id:
+                return i
+    else:
+        # Buscar entre empleados
+        for i , employee in enumerate(only_employees):
+            if employee.get("id") == user_id:
+                return i
+
+    # Si no se encuentra el usuario
+    raise ValueError(f"No se encontró el usuario con el ID: {user_id}") 
 
 def addUser(userJson):
     dataBase = utils.getDataBaseUsers()
@@ -49,26 +76,34 @@ def addUser(userJson):
     with open("./Data/users.json", "W")as update:
         json.dump(dataBase, update, indent=4)
 
-def deleteUser(idUser):
-    pass
+def deleteUser(userId, currentUser):
 
-def deleteValidations(idUser, currentUser): #Verificar que otras validaciones hayq eu tener en cuenta antes de eliminar un usuario
+    delete_user = getUserId(userId)
     if hierarchiesValidation(currentUser):
-        pass
+        userRank = delete_user.getRank()
+        if rankValidation(userRank):
+            if userRank == 2:
+                raise ValueError("No se puede eliminar este usuario")
+            else:
+                deleteIndex = getNumUserId(userId)
+                dataBase = utils.getDataBaseUsers()
 
-     #No se puede eliminar un administrador si el usuario es un empleado
+                if  userRank == 1:
+                    key = "4dm1n"
+                elif userRank == 0:
+                    key = "general"
 
-def rankValidation(newRank):
-    if 0 <= newRank < 2:
-        return True
-    else:
-        return False
+                deleteList = dataBase.get(key)
+                deleteList.pop(deleteIndex)
 
-def verifyPassword(idUser,password): #Verificacion de coincidencia entre id y contrasena del usuario
-    user = getUserId(idUser)
-    if user.getPassword(user) == password:
-        print(" --- Acceso concedido --- ")
-        print(f" --- Bienvenido Usuario {user.getName()} --- ")
+                dataBase[key] = deleteList
+                with open("./Data/users.json", "w")as file:
+                    json.dump(dataBase,file,indent=4)
+        else:
+            raise ValueError("El rango del usuario a eliminar esta por fuera de los parametros")
+
+def rankValidation(rank):
+    if 0 <= rank < 2:
         return True
     else:
         return False
@@ -97,6 +132,23 @@ def accessInfoValidation(idAcces, currentUser):
         return True
     else:
         return False
+
+def loginverify(userID, passwordUser):#Validacion de contrasena perteneciente al usuario 
+    response = False
+    try:
+        
+        userInfo = getUserId(userID)
+        hashSave = userInfo.get("password").encode()
+        
+        if bcrypt.checkpw(passwordUser.encode(), hashSave):
+            response = True
+            print(" --- Acceso concedido --- ")
+            print(f" --- Bienvenido Usuario {userInfo.getName()} --- ")
+        return response
+    except ValueError:
+        print("No se encontro el usuario")
+        return response
+
 
 
 

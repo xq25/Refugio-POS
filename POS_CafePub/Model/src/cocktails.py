@@ -22,6 +22,7 @@ class Cocktails(Products):
                 "principal": self.getPrincipal(),
                 "base": self.getBase(), 
                 "infusion" : self.getHasInfusion()}
+    
     #Accesores y Mutadores
     def getPrincipal(self):
         return self.__principal

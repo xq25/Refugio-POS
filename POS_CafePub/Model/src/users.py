@@ -8,6 +8,9 @@ class Users():
         self.__rank = rank
         self.__password = password
 
+    def toJson(self):
+        return 
+
 
     #Accesores y Mutadores
     def getId(self):
