@@ -106,13 +106,13 @@ def rankValidation(rank):
     if 0 <= rank < 2:
         return True
     else:
-        return False
+        raise ValueError("El rango ingresado es incorrecto, debe estar entre 0 y 1")
 
 def newPasswordValidation(currentPassword,newPassword):
     numValidation = False
     if len(newPassword) < 6 :
         raise ValueError("La contraseña debe tener al menos 6 caracteres")
-    for i in range(newPassword):
+    for i in range(10):
         if str(i) in  newPassword:
             numValidation = True
     if numValidation == False:
@@ -123,7 +123,7 @@ def newPasswordValidation(currentPassword,newPassword):
     
 def hierarchiesValidation(currentUser):
     if currentUser.getRank() != 1 and currentUser.getRank() != 2:
-        return False
+        raise ValueError(f"El usuario {currentUser.getId()} no tiene acceso!")
     else:   
         return True 
 
@@ -131,9 +131,9 @@ def accessInfoValidation(idAcces, currentUser):
     if hierarchiesValidation(currentUser) or currentUser.getId() == idAcces:
         return True
     else:
-        return False
+        raise PermissionError("No cuentas con los privilegios para acceder a esta informacion")
 
-def loginverify(userID, passwordUser):#Validacion de contrasena perteneciente al usuario 
+def loginverify(userID, passwordUser):#Validacion de contrasena perteneciente al usuario  (corregir)
     response = False
     try:
         

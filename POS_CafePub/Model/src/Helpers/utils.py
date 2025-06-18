@@ -25,3 +25,4 @@ def orderId(num:str): #Esta funcion es ajustable a la cantidad de productos maxi
 
 def encryptString(string:str):
     hashed = bcrypt.hashpw(string.encode(), bcrypt.gensalt())
+    return hashed
