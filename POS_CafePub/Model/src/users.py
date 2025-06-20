@@ -3,9 +3,9 @@ from Model.src.Service import usersService as Usrs
 from Model.src.Helpers import utils
 
 class Users():
-    def __init__(self,id, name, password, rank):
+    def __init__(self, name:str, password:str, rank:int,id = Usrs.numberUsers() + 1):
         self.__id = id
-        self.__name = name
+        self.__name = name.capitalize()
         try:
             if Usrs.rankValidation(rank):
                 self.__rank = rank
@@ -17,9 +17,9 @@ class Users():
         except ValueError as error :
             print(f"Error: {error}")
 
-    def fromJson(jsonData):#fundamental, la informacion del usuario debe ser ingresada en texto plano desde el frontEnd para ser encryptada por el backend
+    def fromJson(jsonData):#fundamental!!, la informacion del usuario debe ser ingresada en texto plano desde el frontEnd para ser encryptada por el backend
         info = json.loads(jsonData) 
-        Users(info.get("id"), info.get("name"),info.get("password"),info.get("rank"))
+        Users(info.get("name"),info.get("password"),info.get("rank"))
 
     def toJson(self):
         return {"id": self.__id,
@@ -31,15 +31,15 @@ class Users():
     #Accesores y Mutadores
     def getId(self):
         return self.__id
-
+    #El id del usuario no es modificable. despues de la primera asignacion ese sera siempre su id
     def getName(self):
         return self.__name
-    def setName(self, newName):
+    def setName(self, newName:str):
         self.__name = newName
 
     def getRank(self):
         return self.__rank 
-    def setRank(self, newRank, currentUser):
+    def setRank(self, newRank:int, currentUser:object):
         try:
             if Usrs.hierarchiesValidation(currentUser): 
                 print(" --- Full Access!! --- ")
@@ -48,17 +48,20 @@ class Users():
         except ValueError as error:
             print(f"Error: {error}")
     
-    def getPassword(self, currentUser):
+    def getPassword(self, currentUser:object):
         try:
             if Usrs.accessInfoValidation(self.getId(), currentUser):
                 return self.__password
         except PermissionError as error:
             print(f"Error : {error}")
         
-    def setPassword(self, newPassword):
+    def setPassword(self, newPassword:str):
         if self.__rank == 0 :  
-            raise ValueError("Los empelados no requieren una contraseña")
+            print("Los empelados no requieren una contraseña")
         else: #Solo los administradores y diseñadores pueden tener contraseña
-            if Usrs.newPasswordValidation(self.__password, newPassword): #Si la contraseña cumple con los estandares se aplica el cambio
-                self.__password = newPassword
-            
+            try:
+                if Usrs.newPasswordValidation(self.__password, newPassword): #Si la contraseña cumple con los estandares se aplica el cambio
+                    self.__password = utils.encryptString(newPassword)
+            except ValueError as error:
+                print(f"Error : {error}")
+                

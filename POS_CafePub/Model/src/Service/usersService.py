@@ -2,12 +2,12 @@ from Model.src.Helpers import utils
 import json
 import bcrypt
 
-def getAdminListId():
+def getAdminListId()->list:
     dataBase = utils.getDataBaseUsers()
     adminList = dataBase["4dm1n"].get("id")
     return adminList
 
-def getUserId(user_id):
+def getUserId(user_id)->dict:
     data = utils.getDataBaseUsers()  #Base de datos general
     admins_ids = getAdminListId()  #lista de ids de los admins
     developer = data.get("d3v3l0p3r") #diccionario con la informacion del ingeniero
@@ -33,7 +33,7 @@ def getUserId(user_id):
     # Si no se encuentra el usuario
     raise ValueError(f"No se encontró el usuario con el ID: {user_id}")
 
-def getNumUserId(user_id):
+def getNumUserId(user_id)->int:
     data = utils.getDataBaseUsers()
     admins_ids = getAdminListId()  #lista de ids de los admins
     developer = data.get("d3v3l0p3r") #diccionario con la informacion del ingeniero
@@ -102,13 +102,22 @@ def deleteUser(userId, currentUser):
         else:
             raise ValueError("El rango del usuario a eliminar esta por fuera de los parametros")
 
-def rankValidation(rank):
+def nameValidation(userName)->bool:
+    specialChars = "!@#$%^&*()_+-=[]/,.{}"
+    if len(userName) < 3:
+        raise ValueError("El nombre del usuario debe tener al menos 3 caracteres")
+    for i in specialChars:
+        if i in userName:
+            raise ValueError("El nombre del usuario no puede contener caracteres especiales")
+    return True
+
+def rankValidation(rank)->bool:
     if 0 <= rank < 2:
         return True
     else:
         raise ValueError("El rango ingresado es incorrecto, debe estar entre 0 y 1")
 
-def newPasswordValidation(currentPassword,newPassword):
+def newPasswordValidation(currentPassword,newPassword)->bool:
     numValidation = False
     if len(newPassword) < 6 :
         raise ValueError("La contraseña debe tener al menos 6 caracteres")
@@ -121,33 +130,40 @@ def newPasswordValidation(currentPassword,newPassword):
         raise ValueError("Debes ingresar una contraseña diferente a la que ya tienes")
     return True
     
-def hierarchiesValidation(currentUser):
+def hierarchiesValidation(currentUser)->bool:
     if currentUser.getRank() != 1 and currentUser.getRank() != 2:
         raise ValueError(f"El usuario {currentUser.getId()} no tiene acceso!")
     else:   
         return True 
 
-def accessInfoValidation(idAcces, currentUser):
+def accessInfoValidation(idAcces, currentUser)->bool:
     if hierarchiesValidation(currentUser) or currentUser.getId() == idAcces:
         return True
     else:
         raise PermissionError("No cuentas con los privilegios para acceder a esta informacion")
 
-def loginverify(userID, passwordUser):#Validacion de contrasena perteneciente al usuario  (corregir)
-    response = False
-    try:
-        
-        userInfo = getUserId(userID)
-        hashSave = userInfo.get("password").encode()
-        
-        if bcrypt.checkpw(passwordUser.encode(), hashSave):
-            response = True
-            print(" --- Acceso concedido --- ")
-            print(f" --- Bienvenido Usuario {userInfo.getName()} --- ")
+def numberUsers()->int:
+    data = utils.getDataBaseUsers()
+
+    for key in data.keys():
+        if isinstance(data[f"{key}"],dict):
+            count +=1
+        else: 
+            count += len(data[f"{key}"])
+    return count
+
+def loginverify(userID, passwordUser)->bool:#Validacion de contrasena perteneciente al usuario
+    userInfo = getUserId(userID)
+    hashSave = userInfo.get("password").encode() #encode convierte nuestro string en una cadena de bits
+    
+    if bcrypt.checkpw(passwordUser.encode(), hashSave):  #Validamos que la contra ingresada por el usuario al momento de ser codificada nos da una igualdad o similitud con el hash que teniamos en la base de datos
+        response = True
+        print(" --- Acceso concedido --- ")
+        print(f" --- Bienvenido Usuario {userInfo.getName()} --- ")
         return response
-    except ValueError:
-        print("No se encontro el usuario")
-        return response
+    else:
+        raise ValueError("La contraseña ingresada es incorrecta!")
+        
 
 
 

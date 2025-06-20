@@ -1,4 +1,5 @@
-{   "d3v3l0p3r" : {"id":"DEVJQRLOPER25", "name" : "Jacobo Quintero", "password": "jacobo123","rank" : 2},
+{   
+    "d3v3l0p3r" : {"id":"DEVJQRLOPER25", "name" : "Jacobo Quintero", "password": "jacobo123","rank" : 2},
     "4dm1n" : [
         {"id" : "ADJCMIN", "name": "Juan Camilo Patiño","password": "elrefugio123", "rank" : 1}
     ],
