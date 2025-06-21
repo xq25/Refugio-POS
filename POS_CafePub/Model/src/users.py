@@ -3,7 +3,7 @@ from Model.src.Service import usersService as Usrs
 from Model.src.Helpers import utils
 
 class Users():
-    def __init__(self, name:str, password:str, rank:int,id = Usrs.numberUsers() + 1):
+    def __init__(self, name:str, password:str, rank:int,id = str(Usrs.numberUsers() + 1)):
         self.__id = id
         self.__name = name.capitalize()
         try:
@@ -13,7 +13,7 @@ class Users():
                     self.__password = ""
                 else:
                     if Usrs.newPasswordValidation("",password):
-                        self.__password = utils.encryptString(password)
+                        self.__password = utils.encryptString(password).decode()
         except ValueError as error :
             print(f"Error: {error}")
 

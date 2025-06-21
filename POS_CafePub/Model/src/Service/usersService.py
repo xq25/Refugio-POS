@@ -3,9 +3,12 @@ import json
 import bcrypt
 
 def getAdminListId()->list:
+    idList = []
     dataBase = utils.getDataBaseUsers()
-    adminList = dataBase["4dm1n"].get("id")
-    return adminList
+    adminList = dataBase.get("4dm1n")
+    idList.append(adminList[0].get("id"))
+    
+    return idList
 
 def getUserId(user_id)->dict:
     data = utils.getDataBaseUsers()  #Base de datos general
@@ -71,9 +74,9 @@ def addUser(userJson):
         employees.append(userJson)
         dataBase["general"] = employees
     else:
-        print("Algo salio terriblemente mal en las validaciones de los rangos ")
+        raise ValueError("Algo salio terriblemente mal en las validaciones de los rangos ")
 
-    with open("./Data/users.json", "W")as update:
+    with open("./Data/users.json", "w")as update:
         json.dump(dataBase, update, indent=4)
 
 def deleteUser(userId, currentUser):
@@ -144,7 +147,7 @@ def accessInfoValidation(idAcces, currentUser)->bool:
 
 def numberUsers()->int:
     data = utils.getDataBaseUsers()
-
+    count = 0
     for key in data.keys():
         if isinstance(data[f"{key}"],dict):
             count +=1
@@ -152,14 +155,14 @@ def numberUsers()->int:
             count += len(data[f"{key}"])
     return count
 
-def loginverify(userID, passwordUser)->bool:#Validacion de contrasena perteneciente al usuario
-    userInfo = getUserId(userID)
+def loginverify(userID:str, passwordUser)->bool:#Validacion de contrasena perteneciente al usuario
+    userInfo = getUserId(str(userID))
     hashSave = userInfo.get("password").encode() #encode convierte nuestro string en una cadena de bits
     
     if bcrypt.checkpw(passwordUser.encode(), hashSave):  #Validamos que la contra ingresada por el usuario al momento de ser codificada nos da una igualdad o similitud con el hash que teniamos en la base de datos
         response = True
         print(" --- Acceso concedido --- ")
-        print(f" --- Bienvenido Usuario {userInfo.getName()} --- ")
+        print(f" --- Bienvenido Usuario {userInfo.get("name")} --- ")
         return response
     else:
         raise ValueError("La contraseña ingresada es incorrecta!")

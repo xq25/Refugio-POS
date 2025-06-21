@@ -1,4 +1,9 @@
-from Model.src.drinks import Drinks
-from Model.src.Helpers import utils
-d = Drinks("LIMONADA", 1000, "hjdauhdaujd", False, "limon", "djajdajd")
-print(d.getIsHot())
+from Model.src.users import Users
+from Model.src.Service import usersService
+
+# u = Users("Jacobo Quintero", "elrefugio123",0)
+# jsonData = u.toJson()
+# print (jsonData)
+
+# usersService.addUser(jsonData)
+

@@ -1,9 +1,24 @@
-{   
-    "d3v3l0p3r" : {"id":"DEVJQRLOPER25", "name" : "Jacobo Quintero", "password": "jacobo123","rank" : 2},
-    "4dm1n" : [
-        {"id" : "ADJCMIN", "name": "Juan Camilo Patiño","password": "elrefugio123", "rank" : 1}
+{
+    "d3v3l0p3r": {
+        "id": "1",
+        "name": "Jacobo Quintero",
+        "password": "$2b$12$YLH0Qgjj9TViowouOuMzd.qgEPIufoXzXqj5cOZYKNnnSCHALuz9y",
+        "rank": 2
+    },
+    "4dm1n": [
+        {
+            "id": "2",
+            "name": "Juan camilo",
+            "password": "$2b$12$N4HI0xul2/T4tFZPXPbwoOsOWwPnBQnpSakBPXhHRPW9wVv2798TS",
+            "rank": 1
+        }
     ],
-    "general" : [
-        {"id": "0001", "name" :"Jacobo Quintero", "password": "", "rank" : 0}
+    "general": [
+        {
+            "id": "3",
+            "name": "Jacobo quintero",
+            "password": "",
+            "rank": 0
+        }
     ]
 }
