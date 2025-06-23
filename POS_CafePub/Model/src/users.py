@@ -39,7 +39,7 @@ class Users():
 
     def getRank(self):
         return self.__rank 
-    def setRank(self, newRank:int, currentUser:object):
+    def setRank(self, newRank:int, currentUser):
         try:
             if Usrs.hierarchiesValidation(currentUser): 
                 print(" --- Full Access!! --- ")
@@ -48,7 +48,7 @@ class Users():
         except ValueError as error:
             print(f"Error: {error}")
     
-    def getPassword(self, currentUser:object):
+    def getPassword(self, currentUser):
         try:
             if Usrs.accessInfoValidation(self.getId(), currentUser):
                 return self.__password

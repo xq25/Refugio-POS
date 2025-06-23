@@ -2,11 +2,15 @@ from Model.src.Helpers import utils
 import json
 import bcrypt
 
+# --- Nota ---‼️
+#CurrentUser es un diccionario sobre el cual tenemos acceso despues de loggearnos de manera adecuada y correcta con un usuario
+
 def getAdminListId()->list:
     idList = []
     dataBase = utils.getDataBaseUsers()
     adminList = dataBase.get("4dm1n")
-    idList.append(adminList[0].get("id"))
+    for a in adminList:
+        idList.append(a.get("id"))
     
     return idList
 
@@ -76,8 +80,7 @@ def addUser(userJson):
     else:
         raise ValueError("Algo salio terriblemente mal en las validaciones de los rangos ")
 
-    with open("./Data/users.json", "w")as update:
-        json.dump(dataBase, update, indent=4)
+    utils.safetysave("./Data/users.json",dataBase)
 
 def deleteUser(userId, currentUser):
 
@@ -90,7 +93,6 @@ def deleteUser(userId, currentUser):
             else:
                 deleteIndex = getNumUserId(userId)
                 dataBase = utils.getDataBaseUsers()
-
                 if  userRank == 1:
                     key = "4dm1n"
                 elif userRank == 0:
@@ -100,8 +102,7 @@ def deleteUser(userId, currentUser):
                 deleteList.pop(deleteIndex)
 
                 dataBase[key] = deleteList
-                with open("./Data/users.json", "w")as file:
-                    json.dump(dataBase,file,indent=4)
+                utils.safetysave("./Data/users.json",dataBase)
         else:
             raise ValueError("El rango del usuario a eliminar esta por fuera de los parametros")
 
@@ -134,13 +135,14 @@ def newPasswordValidation(currentPassword,newPassword)->bool:
     return True
     
 def hierarchiesValidation(currentUser)->bool:
-    if currentUser.getRank() != 1 and currentUser.getRank() != 2:
-        raise ValueError(f"El usuario {currentUser.getId()} no tiene acceso!")
+    currentUserRank = currentUser.get("rank")
+    if currentUserRank!= 1 and currentUserRank != 2:
+        raise ValueError(f"El usuario {currentUser.get("id")} no tiene acceso!")
     else:   
         return True 
 
 def accessInfoValidation(idAcces, currentUser)->bool:
-    if hierarchiesValidation(currentUser) or currentUser.getId() == idAcces:
+    if hierarchiesValidation(currentUser) or currentUser.get("id")== idAcces:
         return True
     else:
         raise PermissionError("No cuentas con los privilegios para acceder a esta informacion")
