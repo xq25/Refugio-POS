@@ -1,9 +1,9 @@
 import json
-from Model.src.Service import usersService as Usrs
-from Model.src.Helpers import utils
+from service import usersService as Usrs
+from helpers import utils
 
 class Users():
-    def __init__(self, name:str, password:str, rank:int,id = str(Usrs.numberUsers() + 1)):
+    def __init__(self, name:str, password:str, rank:int, id = str(Usrs.numberUsers() + 1)):
         self.__id = id
         self.__name = name.capitalize()
         try:

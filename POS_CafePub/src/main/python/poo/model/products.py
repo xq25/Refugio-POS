@@ -1,14 +1,22 @@
 import json
 from abc import ABC, abstractmethod
+from service import productsService
 
 class Products(ABC):
     def __init__(self,id, name:str, price:int, type:str, file:str, items:dict):
-        self._id = id
-        self._name = name
-        self._price = price
+        try: 
+            if productsService.assingId(id):
+                self._id = id
+            if productsService.nameValidation(name):
+                self._name = name.capitalize()
+            if productsService.priceValidation(price):
+                self._price = price
+        except Exception as error:
+            raise error
         self._type = type
         self._file = file
         self._items = items #Diccionario con las cantidades de productos que lleva cada producto
+        
 
     #Accesores y Mutadores
     @abstractmethod

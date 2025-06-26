@@ -17,7 +17,7 @@ def getDataBaseUsers():
             info = json.load(file)
         return info
     except FileNotFoundError:
-        raise ("No se Encontro el Archivo: \033[3m./Data/products.json\033[0m")
+        raise ("No se Encontro el Archivo: \033[3m./Data/users.json\033[0m")
 
 def orderId(num:str): #Esta funcion es ajustable a la cantidad de productos maxima en nuestra base de datos 
     lenght = len(num)

@@ -1,6 +1,6 @@
 import json
-from Model.src.products import Products #clase madre
-from Model.src.Service import productsService as Ps
+from model.products import Products #clase madre
+from service import productsService as Ps
 
 class Drinks(Products):
     

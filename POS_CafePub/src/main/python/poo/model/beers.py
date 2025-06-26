@@ -1,7 +1,7 @@
 import json
-from Model.src.products import Products
+from model.products import Products
 
-class Beers(Products):
+class Beers(Products):#corregir
     def __init__(self, id, name, price, file, items, color:str, profile:str, type = "BR"):
         super().__init__(id, name, price, type, file, items)
         self.__color = color #Tipo de cerveza (Roja, Negra, Dorada)
@@ -21,7 +21,7 @@ class Beers(Products):
                 "color" : self.getColor(),
                 "profile" : self.getProfile()}
     
-    # Accesores y Mutadores
+    # --- Accesores y Mutadores ---
     def getColor(self):
         return self.__color
     def setColor(self, newColor):

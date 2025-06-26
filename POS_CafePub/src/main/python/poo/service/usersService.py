@@ -1,4 +1,4 @@
-from Model.src.Helpers import utils
+from helpers import utils
 import json
 import bcrypt
 
@@ -65,7 +65,7 @@ def getNumUserId(user_id)->int:
     # Si no se encuentra el usuario
     raise ValueError(f"No se encontró el usuario con el ID: {user_id}") 
 
-def addUser(userJson):
+def add(userJson):
     dataBase = utils.getDataBaseUsers()
     userRank = userJson.get("rank")
 
@@ -82,7 +82,7 @@ def addUser(userJson):
 
     utils.safetysave("./Data/users.json",dataBase)
 
-def deleteUser(userId, currentUser):
+def delete(userId, currentUser):
 
     delete_user = getUserId(userId)
     if hierarchiesValidation(currentUser):
