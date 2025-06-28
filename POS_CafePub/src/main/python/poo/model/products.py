@@ -1,15 +1,15 @@
 import json
 from abc import ABC, abstractmethod
-from service import productsService
+from service.productsService import ProductService
 
 class Products(ABC):
     def __init__(self,id, name:str, price:int, type:str, file:str, items:dict):
         try: 
-            if productsService.assingId(id):
+            if ProductService.assingId(id):
                 self._id = id
-            if productsService.nameValidation(name):
+            if ProductService.nameValidation(name):
                 self._name = name.capitalize()
-            if productsService.priceValidation(price):
+            if ProductService.priceValidation(price):
                 self._price = price
         except Exception as error:
             raise error

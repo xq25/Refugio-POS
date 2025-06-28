@@ -1,7 +1,7 @@
 import json
 from model.products import Products
 
-class Beers(Products):#corregir
+class Beers(Products):#corregir toda la clase
     def __init__(self, id, name, price, file, items, color:str, profile:str, type = "BR"):
         super().__init__(id, name, price, type, file, items)
         self.__color = color #Tipo de cerveza (Roja, Negra, Dorada)

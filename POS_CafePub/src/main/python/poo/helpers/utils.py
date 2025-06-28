@@ -3,7 +3,7 @@ import bcrypt
 import os
 
 
-def getDataBaseProducts():
+def getDataBaseProducts()->None:
     try:
         with open("./Data/products.json","r") as file:
             info = json.load(file)
@@ -11,7 +11,7 @@ def getDataBaseProducts():
     except FileNotFoundError:
         raise ("No se Encontro el Archivo: \033[3m./Data/products.json\033[0m")
 
-def getDataBaseUsers():
+def getDataBaseUsers()->None:
     try:
         with open("./Data/users.json","r") as file:
             info = json.load(file)
@@ -19,16 +19,17 @@ def getDataBaseUsers():
     except FileNotFoundError:
         raise ("No se Encontro el Archivo: \033[3m./Data/users.json\033[0m")
 
-def orderId(num:str): #Esta funcion es ajustable a la cantidad de productos maxima en nuestra base de datos 
+def orderId(num:str)->int: #Esta funcion es ajustable a la cantidad de productos maxima en nuestra base de datos 
     lenght = len(num)
     id = ("0"*(3-lenght))+num #(el 3 referencia que puede asignar id hasta 999 productos por cada tipo)
     return id
 
-def encryptString(string:str):
+def encryptString(string:str)->str:
     hashed = bcrypt.hashpw(string.encode(), bcrypt.gensalt())
     return hashed
 
-def safetysave(path, data): #Esta funcion genera un archivo temporal con los datos editados de nuestra base de datos para asi remplazar el original al momento de comprobar que todo haya salido bien
+def safetysave(path, data)->None: #Esta funcion genera un archivo temporal con los datos editados de nuestra base de datos para asi remplazar el original al momento de comprobar que todo haya salido bien
+
     tempPath = path + ".temp"
     try:
         with open(tempPath, "w") as temp_File:
@@ -40,3 +41,11 @@ def safetysave(path, data): #Esta funcion genera un archivo temporal con los dat
         if os.path.exists(tempPath): #Si en algun momento se llego a generar el archivo pero aun asi salio algo mal, se elimina
             os.remove(tempPath)
         raise error  #Mostramos que fallo
+
+def stringValidation(string)->bool:
+    specialChars = "!@#$%^&*()_+-=[]/,.{}"
+
+    for i in specialChars:
+        if i in string:
+            raise ValueError(f"La cadena no puede contener caracteres especiales como {i}")
+    return True 
