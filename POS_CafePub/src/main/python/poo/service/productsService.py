@@ -1,5 +1,5 @@
 from helpers import utils
-from service.service import Service
+from service.Service import Service
 
 
 class ProductService(Service):

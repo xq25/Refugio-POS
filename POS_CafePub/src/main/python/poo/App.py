@@ -1,5 +1,4 @@
-from model.users import Users
+from model.Users import Users
+from service.UsersService import UserService
 
-u = Users("Jacobo Quintero", "elrefugio123",1)
 
-print(u.toJson())

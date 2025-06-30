@@ -1,13 +1,13 @@
 {
     "d3v3l0p3r": {
-        "id": "1",
+        "id": "001",
         "name": "Jacobo Quintero",
         "password": "$2b$12$YLH0Qgjj9TViowouOuMzd.qgEPIufoXzXqj5cOZYKNnnSCHALuz9y",
         "rank": 2
     },
     "4dm1n": [
         {
-            "id": "2",
+            "id": "002",
             "name": "Juan Camilo",
             "password": "$2b$12$N4HI0xul2/T4tFZPXPbwoOsOWwPnBQnpSakBPXhHRPW9wVv2798TS",
             "rank": 1
@@ -15,8 +15,8 @@
     ],
     "general": [
         {
-            "id": "3",
-            "name": "Jacobo quintero",
+            "id": "003",
+            "name": "Jacobo Quintero",
             "password": "",
             "rank": 0
         }

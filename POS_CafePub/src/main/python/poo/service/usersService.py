@@ -1,5 +1,5 @@
 from helpers import utils
-from service.service import Service
+from service.Service import Service
 import bcrypt
 
 # --- Nota ---‼️
@@ -58,12 +58,12 @@ class UserService(Service):
 
         delete_user = UserService.getId(userId)
         if UserService.hierarchiesValidation(currentUser):
-            userRank = delete_user.getRank()
+            userRank = delete_user.get("rank")
             if UserService.rankValidation(userRank):
                 if userRank == 2:
                     raise ValueError("No se puede eliminar este usuario")
                 else:
-                    deleteIndex = UserService.getIndexUserId(userId)
+                    deleteIndex = UserService.getIndexUserId(userId,userRank)
                     dataBase = utils.getDataBaseUsers()
                     if  userRank == 1:
                         key = "4dm1n"
@@ -164,13 +164,35 @@ class UserService(Service):
     @staticmethod
     def getIndexUserId(user_id:str, rank:int)->int:#Terminar!!
         data = utils.getDataBaseUsers()
-        rankKey = ""
-        if rank == 2:
-            raise ValueError(f"Los desarrolladores no requieren un indice que los identifique")
+        rank_Key = ""
+        userInfo = UserService.getId(user_id)
 
-        # Si no se encuentra el usuario
-        raise ValueError(f"No se encontró el usuario con el ID: {user_id}") 
-    
+        if userInfo:#Verificacion de que el id ingresado si pertenezca a un usuario en nuestra base de datos
+            
+            if rank == 2: #El usuario desarrollador no se puede eliminar
+                raise ValueError(f"Los desarrolladores no requieren un indice que los identifique")
+            else:
+                #Asignacion de key para ingresar a la base de datos especifica de cada jerarquia
+                if rank == 1: 
+                    rank_Key = "4dm1n"
+                else:
+                    rank_Key = "general"
+                
+                specificData = data.get(rank_Key)
+                index = None
+
+                for i,info in enumerate(specificData):
+                    if info.get("id") == user_id:
+                        index = i
+                if index is not None: #Validamos que exista un indice(Siempre deberia de existir ya que el usuario existe)
+                    return index
+                else:
+                    raise ValueError(f"Algo salio mal en el proceso de buscar el indice del usuario con id: {user_id}")
+
+        else:
+            # Si no se encuentra el usuario
+            raise ValueError(f"No se encontró el usuario con el ID: {user_id}") 
+        
     @staticmethod
     def numberOfUsers()->int:
         data = utils.getDataBaseUsers()

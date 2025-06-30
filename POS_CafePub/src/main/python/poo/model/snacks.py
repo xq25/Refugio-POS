@@ -1,6 +1,6 @@
 import json
-from model.products import Products
-from service.productsService import ProductService as Ps
+from model.Products import Products
+from service.ProductsService import ProductService as Ps
 
 class Snacks(Products):
 

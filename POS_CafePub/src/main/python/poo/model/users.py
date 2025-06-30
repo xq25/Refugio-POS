@@ -1,5 +1,5 @@
 import json
-from service.usersService import UserService
+from service.UsersService import UserService
 from helpers import utils
 
 class Users():

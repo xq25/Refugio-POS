@@ -2,7 +2,6 @@ import json
 import bcrypt
 import os
 
-
 def getDataBaseProducts()->None:
     try:
         with open("./Data/products.json","r") as file:
