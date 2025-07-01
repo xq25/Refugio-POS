@@ -57,8 +57,6 @@ class Cocktails(Products):
 
     def getType(self):
         return self._type
-    def setType(self, newType):
-        super().setType(newType)
 
     def getFile(self):
         return self._file

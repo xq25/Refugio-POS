@@ -39,12 +39,7 @@ class Products(ABC):
     @abstractmethod
     def getType(self):
         return self._type
-    @abstractmethod
-    def setType(self, newType):
-        #Si se cambia el tipo del producto cambian sus atributos hay que generar un nuevo producto
-        #Generar las validaciones para saber que tipo de producto es y asi llamar al constructor de su respectiva clase
-        print("Funcion aun no implementada")
-        pass
+    #No se puede cambiar el tipo de un producto despues de ya ser asignado
     
     @abstractmethod
     def getFile(self):

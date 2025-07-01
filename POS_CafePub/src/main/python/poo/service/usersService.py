@@ -79,9 +79,26 @@ class UserService(Service):
                 raise ValueError("El rango del usuario a eliminar esta por fuera de los parametros")
     
     @staticmethod
-    def update(userId, newJsonData):
-        pass
-    
+    def update(userId:str, newJsonData:dict, currentUser:dict):
+
+        currentInfo = UserService.getId(userId)
+        currentRank = currentInfo.get("rank")
+        
+        if UserService.accessInfoValidation(userId, currentUser):
+            data = utils.getDataBaseUsers()
+
+            if UserService.changeRankValidation(currentRank, newJsonData.get("rank")):
+                UserService.delete(userId, currentUser)
+                UserService.add(newJsonData)
+            else:
+                indexUpdate = UserService.getIndexUserId(userId)
+                key = UserService.clasificator(currentRank)
+                specificData = data.get(f"{key}")
+                specificData[indexUpdate] = newJsonData
+
+                data[f"{key}"] = specificData
+                utils.safetysave("./Data/users.json", data)
+                
     @staticmethod
     def assingId():
         count = UserService.numberOfUsers() + 1
@@ -130,12 +147,19 @@ class UserService(Service):
             return True 
 
     @staticmethod
-    def accessInfoValidation(idAcces, currentUser)->bool:
+    def accessInfoValidation(idAcces:str, currentUser:dict)->bool:
+        #idAcces es el id de la instancia sobre la cual queremos acceder o modificar
         if UserService.hierarchiesValidation(currentUser) or currentUser.get("id")== idAcces:
             return True
         else:
             raise PermissionError("No cuentas con los privilegios para acceder a esta informacion")
 
+    @staticmethod 
+    def changeRankValidation(currentRank, newRank):
+        if newRank != currentRank:
+            return True
+        else:
+            return False
     # --- Validacion de acceso e inicio de sesion ---
     @staticmethod
     def loginverify(userID:str, passwordUser)->bool:#Validacion de contrasena perteneciente al usuario
@@ -203,7 +227,19 @@ class UserService(Service):
             else: 
                 count += len(data[f"{key}"])
         return count
-
+    
+    @staticmethod
+    def clasificator(rank:int)->str:
+        key = ""
+        if rank == 1:
+            key = "4dm1n"
+        elif rank == 0:
+            key = "general"
+        else:
+            raise ValueError(f"El rango ingresado no esta dentro de la informacion visible al publico de la base de datos")
+        
+        return key
+    
 #Todas las funcionalidades de los usuarios dependen del usuario sobre el cual estamso accediendo a la info, dependiendo de su rango puede realizar mas o menos operaciones
 
     

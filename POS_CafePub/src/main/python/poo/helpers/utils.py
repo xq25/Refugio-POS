@@ -2,7 +2,7 @@ import json
 import bcrypt
 import os
 
-def getDataBaseProducts()->None:
+def getDataBaseProducts()->dict:
     try:
         with open("./Data/products.json","r") as file:
             info = json.load(file)
@@ -10,7 +10,7 @@ def getDataBaseProducts()->None:
     except FileNotFoundError:
         raise ("No se Encontro el Archivo: \033[3m./Data/products.json\033[0m")
 
-def getDataBaseUsers()->None:
+def getDataBaseUsers()->dict:
     try:
         with open("./Data/users.json","r") as file:
             info = json.load(file)

@@ -39,7 +39,7 @@ class Users():
 
     def getRank(self):
         return self.__rank 
-    def setRank(self, newRank:int, currentUser):
+    def setRank(self, newRank:int, currentUser:dict):
         try:
             if UserService.hierarchiesValidation(currentUser): 
                 print(" --- Full Access!! --- ")

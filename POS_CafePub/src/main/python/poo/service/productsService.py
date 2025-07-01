@@ -51,7 +51,16 @@ class ProductService(Service):
             
     @staticmethod
     def update(id:str, newJsonData:dict)->None:
-        pass
+        #Primera prueba sin realizar validaciones en esta parte del service y sin validar los privilegios del usuario
+        data = utils.getDataBaseProducts()
+        indexUpdate = ProductService.getIndexProductId(id) 
+        key = ProductService.clasificator(id[:2])
+        specificData = data.get(f"{key}")
+
+        specificData[indexUpdate] = newJsonData 
+        data[f"{key}"] = specificData
+
+        utils.safetysave("./Data/products.json", data)
 
     @staticmethod
     def assingId(type:str)->str:
@@ -122,4 +131,11 @@ class ProductService(Service):
             for p, info in enumerate(specificData):
                 if info.get("id") == id:
                     return p
-            raise ValueError(f"Algo salio mal al momento de identificar el indice del producto con id: {id}")
+            raise ValueError(f"Algo salio mal al momento de identificar el indice del producto con id: {id}")\
+            
+    @staticmethod 
+    def changeTypeValidation(currentType, newType):
+        if currentType != newType:
+            return True
+        else:
+            return False
