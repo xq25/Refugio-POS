@@ -3,9 +3,9 @@ from abc import ABC, abstractmethod
 from service.ProductsService import ProductService
 
 class Products(ABC):
-    def __init__(self,id, name:str, price:int, type:str, file:str, items:dict):
+    def __init__(self,id:str, name:str, price:int, type:str, file:str):
         try: 
-            if ProductService.assingId(id):
+            if ProductService.idValidation(id):
                 self._id = id
             if ProductService.nameValidation(name):
                 self._name = name.capitalize()
@@ -15,9 +15,7 @@ class Products(ABC):
             raise error
         self._type = type
         self._file = file
-        self._items = items #Diccionario con las cantidades de productos que lleva cada producto
         
-
     #Accesores y Mutadores
     @abstractmethod
     def getId(self):
@@ -54,10 +52,3 @@ class Products(ABC):
     @abstractmethod
     def setFile(self, newFile):
         self._file = newFile
-
-    @abstractmethod
-    def getItems(self):
-        return self._items
-    @abstractmethod
-    def setItems(self, newDict):
-        self._items = newDict

@@ -5,8 +5,9 @@ from service.ProductsService import ProductService as Ps
 class Drinks(Products):
     
 
-    def __init__(self,name:str, price:int, file:str, hot:bool, base, items, type = "DK", id = Ps.assingId("DK")):
-        super().__init__(id, name, price, type, file, items)
+    def __init__(self,name:str, price:int, file:str, hot:bool, base:str, items:dict, type = "DK", id = Ps.assingId("DK")):
+        super().__init__(id, name, price, type, file)
+        self.__items = items
         self.__hot = hot
         self.__base = base #Se refiere a la base de la bebida (Leche o Agua)
 
@@ -21,7 +22,8 @@ class Drinks(Products):
                 "type": self._type,
                 "file": self._file,
                 "hot": self.getIsHot(),
-                "base": self.getBase()}
+                "base": self.getBase(),
+                "items": self.getItems()}
     #Accesores y mutadores
     def getIsHot(self):
         return self.__hot
@@ -36,7 +38,6 @@ class Drinks(Products):
     def getId(self):
         return self._id
     
-
     def getName(self):
         return self._name
     def setName(self, newName):
@@ -58,9 +59,9 @@ class Drinks(Products):
         super().setFile(newFile)
 
     def getItems(self):
-        return self._items
+        return self.__items
     def setItems(self, newDict):
-        super().setItems(newDict)
+        self.__items = newDict
 
 
 

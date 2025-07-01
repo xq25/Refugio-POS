@@ -10,8 +10,8 @@ class ProductService(Service):
         #clasificamos el tipo de producto
         try: 
             key = ProductService.clasificator(productData.get("type"))
-            specificData = data[f"{key}"]
-            specificData.append(productData)
+            specificData = data[f"{key}"] #specificData es la base de datos segun la clasificacion de la instacia a la que se hafce referencia
+            specificData.append(productData) 
             data[f"{key}"] = specificData
 
             utils.safetysave("./Data/products.json", data)
@@ -22,21 +22,9 @@ class ProductService(Service):
     @staticmethod
     def assingId(type:str):
         dataBase = utils.getDataBaseProducts()
-
-        if type == "BR":
-            num = str(len(dataBase["Beers"]) +1)
-        elif type == "CT":
-            num = str(len(dataBase["Cocktails"])+1)
-        elif type == "DK":
-            num = str(len(dataBase["Drinks"])+1)
-        elif type == "FD":
-            num = str(len(dataBase["Foods"])+1)
-        elif type == "SK":
-            num = str(len(dataBase["Snacks"])+1)
-        else:
-            raise ValueError(f"No existe este tipo de producto: {type}")
-        
-        id = type + utils.orderId(num)
+        key = ProductService.clasificator(type)
+        size = str(len(dataBase.get(f"{key}")) + 1)
+        id = type + utils.orderId(size)
         return id
     
     # --- Validaciones --- ✅❌
@@ -84,6 +72,6 @@ class ProductService(Service):
         elif type == "SK":
             key = "Snacks"
         else:
-            raise ValueError(f"No xiste este tipo de producto: {type}")
+            raise ValueError(f"No existe este tipo de producto: {type}")
         
         return key

@@ -3,8 +3,9 @@ from model.Products import Products #clase madre
 from service.ProductsService import ProductService as Ps
 
 class Foods(Products):
-    def __init__(self, name, price,  file, principal:str, sweet:bool, items,  type = "FD",id = Ps.assingId("FD")):
-        super().__init__(id,name, price, type, file, items)
+    def __init__(self, name:str, price:int,  file:str, principal:str, sweet:bool, items:dict,  type = "FD",id = Ps.assingId("FD")):
+        super().__init__(id,name, price, type, file)
+        self.__items = items
         self.__principal = principal   #Elemento principal de esa comida
         self.__sweet = sweet #Comida dulce?
 
@@ -19,7 +20,9 @@ class Foods(Products):
                 "type": self._type,
                 "file": self._file,
                 "principal": self.getPrincipal(),
-                "sweet": self.getSweet()}
+                "sweet": self.getSweet(),
+                "items": self.getItems()}
+    
     #Accesores y Mutadores
     def getPrincipal(self):
         return self.__principal
@@ -55,7 +58,6 @@ class Foods(Products):
         super().setFile(newFile)
 
     def getItems(self):
-        return self._items
-
+        return self.__items
     def setItems(self, newDict):
-        super().setItems(newDict)
+        self.__items = newDict

@@ -3,8 +3,9 @@ from model.Products import Products
 from service.ProductsService import ProductService as Ps
 
 class Cocktails(Products):
-    def __init__(self, name, price,  file, principal:str, base:str, infusion:bool, items, type="CT", id = Ps.assingId("CT")):
-        super()._init_(id,name, price, type, file, items)
+    def __init__(self, name, price,  file, principal:str, base:str, infusion:bool, items:dict, type="CT", id = Ps.assingId("CT")):
+        super()._init_(id,name, price, type, file)
+        self.__items = items #Diccionario con las cantidades de productos que lleva cada producto
         self.__principal = principal #Licor predominante en el coctel (principal)
         self.__base = base #Puede ser la principal combinacion (Limon, Bretaña, Naranja)
         self.__infusion = infusion #Tiene o no tiene alguna infusion
@@ -21,7 +22,8 @@ class Cocktails(Products):
                 "file": self._file,
                 "principal": self.getPrincipal(),
                 "base": self.getBase(), 
-                "infusion" : self.getHasInfusion()}
+                "infusion" : self.getHasInfusion(),
+                "items": self.getItems()}
     
     #Accesores y Mutadores
     def getPrincipal(self):
@@ -64,10 +66,9 @@ class Cocktails(Products):
         super().setFile(newFile)
 
     def getItems(self):
-        return self._items
-
+        return self.__items
     def setItems(self, newDict):
-        super().setItems(newDict)
+        self.__items = newDict
 
 
     

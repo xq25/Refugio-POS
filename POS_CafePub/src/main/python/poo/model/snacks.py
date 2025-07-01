@@ -4,14 +4,14 @@ from service.ProductsService import ProductService as Ps
 
 class Snacks(Products):
 
-    def __init__(self, name, price, file, items, principal,sweet, type = "SK", id = Ps.assingId("SK")):
-        super().__init__(id, name, price, type, file, items)
-        self.__principal = principal
+    def __init__(self, name:str, price:int, file:str, principal:str,sweet:bool, type = "SK", id = Ps.assingId("SK")):
+        super().__init__(id, name, price, type, file)
+        self.__principal = principal.capitalize()
         self.__sweet = sweet
 
     def fromJson(jsonData):
         info = json.loads(jsonData)
-        Snacks(info.get("name"),info.get("price"), info.get("file"),info.get("principal"),info.get("sweet"), info.get("items"))
+        Snacks(info.get("name"),info.get("price"), info.get("file"),info.get("principal"),info.get("sweet"))
 
     def toJson(self):
         return {"id": self._id,
@@ -55,8 +55,3 @@ class Snacks(Products):
         return self._file
     def setFile(self, newFile):
         super().setFile(newFile)
-
-    def getItems(self):
-        return self._items
-    def setItems(self, newDict):
-        super().setItems(newDict)
