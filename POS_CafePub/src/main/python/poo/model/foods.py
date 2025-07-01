@@ -1,6 +1,6 @@
 import json
-from model.Products import Products #clase madre
-from service.ProductsService import ProductService as Ps
+from model.products import Products #clase madre
+from service.productsService import ProductService as Ps
 
 class Foods(Products):
     def __init__(self, name:str, price:int,  file:str, principal:str, sweet:bool, items:dict,  type = "FD",id = Ps.assingId("FD")):

@@ -1,6 +1,6 @@
 import json
 from abc import ABC, abstractmethod
-from service.ProductsService import ProductService
+from service.productsService import ProductService
 
 class Products(ABC):
     def __init__(self,id:str, name:str, price:int, type:str, file:str):

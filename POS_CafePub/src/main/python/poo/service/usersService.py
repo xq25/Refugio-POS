@@ -1,5 +1,5 @@
 from helpers import utils
-from service.Service import Service
+from service.service import Service
 import bcrypt
 
 # --- Nota ---‼️

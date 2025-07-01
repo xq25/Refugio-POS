@@ -1,8 +1,8 @@
 import json
-from model.Products import Products
-from service.ProductsService import ProductService as Ps
+from model.products import Products
+from service.productsService import ProductService as Ps
 
-class Beers(Products):#corregir toda la clase
+class Beers(Products):
     def __init__(self, name:str, price:int, file:str, color:str, profile:str, type = "BR", id = Ps.assingId("BR")):
         super().__init__(id, name, price, type, file)
         self.__color = color #Tipo de cerveza (Roja, Negra, Dorada)
