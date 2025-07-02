@@ -40,18 +40,12 @@ class UserService(Service):
         dataBase = utils.getDataBaseUsers()
         userRank = userJson.get("rank")
 
-        if userRank == 1: 
-            admins = dataBase.get("4dm1n")
-            admins.append(userJson)
-            dataBase["4dm1n"] = admins
-        elif userRank == 0:
-            employees = dataBase.get("general")
-            employees.append(userJson)
-            dataBase["general"] = employees
-        else:
-            raise ValueError("Algo salio terriblemente mal en las validaciones de los rangos ")
+        key = UserService.clasificator(userRank)
+        specificData = dataBase.get({f"{key}"})
+        specificData.append(userJson)
+        dataBase[f"{key}"] = specificData
 
-        utils.safetysave("./Data/users.json",dataBase)
+        utils.safetysave("./Data/users.json", dataBase)
 
     @staticmethod
     def delete(userId, currentUser):
@@ -65,10 +59,7 @@ class UserService(Service):
                 else:
                     deleteIndex = UserService.getIndexUserId(userId,userRank)
                     dataBase = utils.getDataBaseUsers()
-                    if  userRank == 1:
-                        key = "4dm1n"
-                    elif userRank == 0:
-                        key = "general"
+                    key = UserService.clasificator(userRank)
 
                     deleteList = dataBase.get(key)
                     deleteList.pop(deleteIndex)

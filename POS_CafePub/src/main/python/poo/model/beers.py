@@ -18,7 +18,6 @@ class Beers(Products):
                 "price": self._price,
                 "type": self._type,
                 "file": self._file,
-                "items" : self._items,
                 "color" : self.getColor(),
                 "profile" : self.getProfile()}
     

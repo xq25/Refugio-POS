@@ -25,9 +25,9 @@ class ProductService(Service):
         #clasificamos el tipo de producto
         try: 
             key = ProductService.clasificator(productData.get("type"))
-            specificData = data[f"{key}"] #specificData es la base de datos segun la clasificacion de la instacia a la que se hafce referencia
+            specificData = data.get(f"{key}") #specificData es la base de datos segun la clasificacion de la instacia a la que se hafce referencia
             specificData.append(productData) 
-            data[f"{key}"] = specificData
+            data[key] = specificData
 
             utils.safetysave("./Data/products.json", data)
 
@@ -41,7 +41,7 @@ class ProductService(Service):
 
         if UserService.hierarchiesValidation(currentUser):
             if info:
-                key = ProductService.clasificator(id)
+                key = ProductService.clasificator(id[:2])
                 specificData = data.get(f"{key}")
                 deleteIndex = ProductService.getIndexProductId(id)  
                 specificData.pop(deleteIndex)

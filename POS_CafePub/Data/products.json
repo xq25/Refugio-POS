@@ -1,15 +1,5 @@
 {
-    "Beers": [
-        {
-            "id": "BR001",
-            "name": "Club dorada",
-            "price": 7500,
-            "type": "BR",
-            "file": "",
-            "color": "dorado",
-            "profile": "Amargo"
-        }
-    ],
+    "Beers": [],
     "Cocktails": [],
     "Drinks": [],
     "Foods": [],
