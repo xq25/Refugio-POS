@@ -8,7 +8,8 @@ class Snacks(Products):
         super().__init__(id, name, price, type, file)
         self.__principal = principal.capitalize()
         self.__sweet = sweet
-
+    
+    @staticmethod
     def fromJson(jsonData):
         info = json.loads(jsonData)
         Snacks(info.get("name"),info.get("price"), info.get("file"),info.get("principal"),info.get("sweet"))

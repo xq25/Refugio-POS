@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 class Service(ABC):
+    @classmethod
     def getId(id:str)->dict:
         '''Esta funcion permite tener acceso a la informacion puntual de una instancia guardada
         dentro de nuestra base de datos, siempre y cuando tenga una clave "id"

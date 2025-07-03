@@ -17,6 +17,7 @@ class Users():
         except ValueError as error :
             print(f"Error: {error}")
 
+    @staticmethod
     def fromJson(jsonData):#fundamental!!, la informacion del usuario debe ser ingresada en texto plano desde el frontEnd para ser encryptada por el backend
         info = json.loads(jsonData) 
         Users(info.get("name"),info.get("password"),info.get("rank"))

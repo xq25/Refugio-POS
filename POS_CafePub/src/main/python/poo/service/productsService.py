@@ -82,8 +82,8 @@ class ProductService(Service):
 
     @staticmethod 
     def nameValidation(name:str)->bool:
-        if len(name)<3:
-            raise ValueError("El tamaño minimo del nombre del producto es de 3 caracteres")
+        if len(name)<3 and len(name) > 30:
+            raise ValueError("El nombre del producto debe ser de al menos 3 caracteres y maximo 30")
         if utils.stringValidation(name):
             return True
 
@@ -136,6 +136,6 @@ class ProductService(Service):
     @staticmethod 
     def changeTypeValidation(currentType, newType):
         if currentType != newType:
-            return True
+            raise ValueError("El tipo de producto no se puede cambiar")
         else:
-            return False
+            return True

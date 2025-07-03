@@ -9,6 +9,7 @@ class Foods(Products):
         self.__principal = principal   #Elemento principal de esa comida
         self.__sweet = sweet #Comida dulce?
 
+    @staticmethod
     def fromJson(jsonData):
         info = json.loads(jsonData)
         Foods(info.get("name"),info.get("price"), info.get("file"),info.get("principal"),info.get("sweet"), info.get("items"))

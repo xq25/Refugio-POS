@@ -1,6 +1,6 @@
 {
     "d3v3l0p3r": {
-        "id": "001",
+        "id": "JQ001",
         "name": "Jacobo Quintero",
         "password": "$2b$12$YLH0Qgjj9TViowouOuMzd.qgEPIufoXzXqj5cOZYKNnnSCHALuz9y",
         "rank": 2
@@ -13,12 +13,5 @@
             "rank": 1
         }
     ],
-    "general": [
-        {
-            "id": "003",
-            "name": "Jacobo Quintero",
-            "password": "",
-            "rank": 0
-        }
-    ]
+    "general": []
 }

@@ -3,7 +3,7 @@ from service.service import Service
 import bcrypt
 
 # --- Nota ---‼️
-#   CurrentUser es un diccionario sobre el cual tenemos acceso despues de loggearnos de manera adecuada y correcta con un usuario
+#   CurrentUser es un diccionario con toda la informacion de un usuario. Sobre el cual tenemos acceso despues de loggearnos de manera adecuada y correcta con un usuario
 #--------------------------------------------------------------------------------------------------------------------------------
 
 class UserService(Service):
@@ -41,7 +41,7 @@ class UserService(Service):
         userRank = userJson.get("rank")
 
         key = UserService.clasificator(userRank)
-        specificData = dataBase.get({f"{key}"})
+        specificData = dataBase.get(f"{key}")
         specificData.append(userJson)
         dataBase[f"{key}"] = specificData
 
@@ -68,7 +68,7 @@ class UserService(Service):
                     utils.safetysave("./Data/users.json",dataBase)
             else:
                 raise ValueError("El rango del usuario a eliminar esta por fuera de los parametros")
-    
+
     @staticmethod
     def update(userId:str, newJsonData:dict, currentUser:dict):
 
@@ -79,8 +79,13 @@ class UserService(Service):
             data = utils.getDataBaseUsers()
 
             if UserService.changeRankValidation(currentRank, newJsonData.get("rank")):
-                UserService.delete(userId, currentUser)
-                UserService.add(newJsonData)
+
+                if userId == "JQ001":
+                    raise ValueError("El desarrollador no puede modificar su rango por motivos de seguridad")
+                else:
+                    UserService.delete(userId, currentUser)  
+                    #Si el add presenta alguna falla debemos reestablecer los cambios
+                    UserService.add(newJsonData)
             else:
                 indexUpdate = UserService.getIndexUserId(userId)
                 key = UserService.clasificator(currentRank)
@@ -101,13 +106,11 @@ class UserService(Service):
     
     @staticmethod
     def nameValidation(userName)->bool:
-        specialChars = "!@#$%^&*()_+-=[]/,.{}"
-        if len(userName) < 3:
-            raise ValueError("El nombre del usuario debe tener al menos 3 caracteres")
-        for i in specialChars:
-            if i in userName:
-                raise ValueError("El nombre del usuario no puede contener caracteres especiales")
-        return True
+        
+        if len(userName) < 3 and len(userName) > 20:
+            raise ValueError("El nombre del usuario debe ser de 3 a 20 caracteres")
+        if utils.stringValidation(userName):
+            return True
     @staticmethod
     def rankValidation(rank)->bool:
         if 0 <= rank < 2:
@@ -124,7 +127,7 @@ class UserService(Service):
             if str(i) in  newPassword:
                 numValidation = True
         if numValidation == False:
-            raise ValueError("La contraseña debe tener al menos un numero")
+            raise ValueError("La contraseña debe tener al menos un numero entero")
         if newPassword == currentPassword:
             raise ValueError("Debes ingresar una contraseña diferente a la que ya tienes")
         return True

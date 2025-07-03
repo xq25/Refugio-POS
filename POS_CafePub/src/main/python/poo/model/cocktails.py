@@ -10,6 +10,7 @@ class Cocktails(Products):
         self.__base = base #Puede ser la principal combinacion (Limon, Bretaña, Naranja)
         self.__infusion = infusion #Tiene o no tiene alguna infusion
 
+    @staticmethod
     def fromJson(jsonData):
         info = json.loads(jsonData)
         Cocktails(info.get("name"), info.get("price"), info.get("file"), info.get("principal"), info.get("base"), info.get("infusion"),info.get("items"))

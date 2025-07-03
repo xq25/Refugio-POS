@@ -1,6 +1,8 @@
 import json
 import bcrypt
 import os
+import string
+import random
 
 def getDataBaseProducts()->dict:
     try:
@@ -46,5 +48,10 @@ def stringValidation(string)->bool:
 
     for i in specialChars:
         if i in string:
-            raise ValueError(f"La cadena no puede contener caracteres especiales como {i}")
+            raise ValueError(f"La cadena no puede contener caracteres especiales como : {i}")
     return True 
+
+def randomString(length:int) ->str:
+    caracteres = string.ascii_uppercase  # Solo A-Z
+    resultado = ''.join(random.choice(caracteres) for _ in range(length))
+    return resultado

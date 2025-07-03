@@ -3,15 +3,14 @@ from model.products import Products #clase madre
 from service.productsService import ProductService as Ps
 
 class Drinks(Products):
-    
-
     def __init__(self,name:str, price:int, file:str, hot:bool, base:str, items:dict, type = "DK", id = Ps.assingId("DK")):
         super().__init__(id, name, price, type, file)
         self.__items = items
         self.__hot = hot
         self.__base = base #Se refiere a la base de la bebida (Leche o Agua)
 
-    def fromJson (jsonData):
+    @staticmethod
+    def fromJson (jsonData:dict):
         info = json.loads(jsonData)
         Drinks(info.get("name"), info.get("price"),info.get("file"),info.get("hot"),info.get("base"), info.get("items"))
     

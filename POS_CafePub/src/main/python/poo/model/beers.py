@@ -8,6 +8,7 @@ class Beers(Products):
         self.__color = color #Tipo de cerveza (Roja, Negra, Dorada)
         self.__profile = profile # Se centra principalmente en (Dulce, Amargo, Aroma, Etc)
 
+    @staticmethod
     def fromJson(jsonData):
         info = json.loads(jsonData)
         Beers(info.get("name"), info.get("price"),info.get("file"), info.get("color"), info.get("profile"))
