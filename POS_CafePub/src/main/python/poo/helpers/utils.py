@@ -4,21 +4,13 @@ import os
 import string
 import random
 
-def getDataBaseProducts()->dict:
+def getDataBase(path:str)->dict:
     try:
-        with open("./Data/products.json","r") as file:
+        with open(path,"r") as file:
             info = json.load(file)
         return info
     except FileNotFoundError:
-        raise ("No se Encontro el Archivo: \033[3m./Data/products.json\033[0m")
-
-def getDataBaseUsers()->dict:
-    try:
-        with open("./Data/users.json","r") as file:
-            info = json.load(file)
-        return info
-    except FileNotFoundError:
-        raise ("No se Encontro el Archivo: \033[3m./Data/users.json\033[0m")
+        raise (f"No se Encontro el Archivo: \033[3m{path}033[0m")
 
 def orderId(num:str)->int: #Esta funcion es ajustable a la cantidad de productos maxima en nuestra base de datos 
     lenght = len(num)

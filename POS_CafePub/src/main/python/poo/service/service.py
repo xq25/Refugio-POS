@@ -1,7 +1,15 @@
 from abc import ABC, abstractmethod
 
 class Service(ABC):
-    @classmethod
+    
+    @abstractmethod
+    def getAll(specificData:list)->list:
+        '''Esta funcion nos permite obtener todos las instancias de un tipo especifico, siendo asi adaptable para usuarios
+        y productos.
+        
+        Posteriormente sera implementada en las clases de servicios'''
+        pass
+
     def getId(id:str)->dict:
         '''Esta funcion permite tener acceso a la informacion puntual de una instancia guardada
         dentro de nuestra base de datos, siempre y cuando tenga una clave "id"
@@ -10,7 +18,7 @@ class Service(ABC):
         aplicandolo cada una de una forma distinta con sus respectivas validaciones.
         '''
         pass
-    
+    @abstractmethod
     def add(jsonData:dict)->None:
         '''Esta funcion recibe la informacion en un formato diccionario o json 
         para asi ser enviada a su respectiva clasificacion dentro de nuestra base de datos.

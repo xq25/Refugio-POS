@@ -10,7 +10,7 @@ class UserService(Service):
     # --- Herencia de Service --- ⚙️
     @staticmethod
     def getId(user_id)->dict:
-        data = utils.getDataBaseUsers()  #Base de datos general
+        data = utils.getDataBase("./Data/users.json")  #Base de datos general
         admins_ids = UserService.getAdminListId()  #lista de ids de los admins
         developer = data.get("d3v3l0p3r") #diccionario con la informacion del ingeniero
         only_admins = data.get("4dm1n", []) #Lista de diccionarios con informacion de los administradores 
@@ -37,7 +37,7 @@ class UserService(Service):
     
     @staticmethod
     def add(userJson:dict):
-        dataBase = utils.getDataBaseUsers()
+        dataBase = utils.getDataBase("./Data/users.json")
         userRank = userJson.get("rank")
 
         key = UserService.clasificator(userRank)
@@ -58,7 +58,7 @@ class UserService(Service):
                     raise ValueError("No se puede eliminar este usuario")
                 else:
                     deleteIndex = UserService.getIndexUserId(userId,userRank)
-                    dataBase = utils.getDataBaseUsers()
+                    dataBase = utils.getDataBase("./Data/users.json")
                     key = UserService.clasificator(userRank)
 
                     deleteList = dataBase.get(key)
@@ -76,7 +76,7 @@ class UserService(Service):
         currentRank = currentInfo.get("rank")
         
         if UserService.accessInfoValidation(userId, currentUser):
-            data = utils.getDataBaseUsers()
+            data = utils.getDataBase("./Data/users.json")
 
             if UserService.changeRankValidation(currentRank, newJsonData.get("rank")):
 
@@ -172,7 +172,7 @@ class UserService(Service):
     @staticmethod  
     def getAdminListId()->list:
         idList = []
-        dataBase = utils.getDataBaseUsers()
+        dataBase = utils.getDataBase("./Data/users.json")
         adminList = dataBase.get("4dm1n")
         for a in adminList:
             idList.append(a.get("id"))
@@ -181,7 +181,7 @@ class UserService(Service):
     
     @staticmethod
     def getIndexUserId(user_id:str, rank:int)->int:#Terminar!!
-        data = utils.getDataBaseUsers()
+        data = utils.getDataBase("./Data/users.json")
         rank_Key = ""
         userInfo = UserService.getId(user_id)
 
@@ -213,7 +213,7 @@ class UserService(Service):
         
     @staticmethod
     def numberOfUsers()->int:
-        data = utils.getDataBaseUsers()
+        data = utils.getDataBase("./Data/users.json")
         count = 0
         for key in data.keys():
             if isinstance(data[f"{key}"],dict):

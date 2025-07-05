@@ -5,10 +5,10 @@ from service.usersService import UserService
 
 class ProductService(Service):
     # --- Herencia de Service --- ⚙️
-
     @staticmethod
     def getId(id:str)->dict:
-        data = utils.getDataBaseProducts()
+        
+        data = utils.getDataBase("./Data/products.json")
         type = id[:2]
         key = ProductService.clasificator(type)
         specificData = data.get(f"{key}")
@@ -20,7 +20,7 @@ class ProductService(Service):
 
     @staticmethod
     def add(productData:dict)->None:
-        data = utils.getDataBaseProducts()
+        data = utils.getDataBase("./Data/products.json")
 
         #clasificamos el tipo de producto
         try: 
@@ -37,7 +37,7 @@ class ProductService(Service):
     @staticmethod
     def delete(id:str, currentUser:dict)->None:
         info = ProductService.getId(id)
-        data = utils.getDataBaseProducts()
+        data = utils.getDataBase("./Data/products.json")
 
         if UserService.hierarchiesValidation(currentUser):
             if info:
@@ -52,7 +52,7 @@ class ProductService(Service):
     @staticmethod
     def update(id:str, newJsonData:dict)->None:
         #Primera prueba sin realizar validaciones en esta parte del service y sin validar los privilegios del usuario
-        data = utils.getDataBaseProducts()
+        data = utils.getDataBase("./Data/products.json")
         indexUpdate = ProductService.getIndexProductId(id) 
         key = ProductService.clasificator(id[:2])
         specificData = data.get(f"{key}")
@@ -64,7 +64,7 @@ class ProductService(Service):
 
     @staticmethod
     def assingId(type:str)->str:
-        dataBase = utils.getDataBaseProducts()
+        dataBase = utils.getDataBase("./Data/products.json")
         key = ProductService.clasificator(type)
         size = str(len(dataBase.get(f"{key}")) + 1)
         id = type + utils.orderId(size)
@@ -123,7 +123,7 @@ class ProductService(Service):
     def getIndexProductId(id)->int:
         info = ProductService.getId(id)
         if info:
-            data = utils.getDataBaseProducts()
+            data = utils.getDataBase("./Data/products.json")
             type = id[:2]
             key = ProductService.clasificator(type)
             specificData = data.get(f"{key}")
