@@ -1,8 +1,4 @@
 class ServiceOrder():
-    #Esta clase representa los servicios especificos que requiere un pedido
-    def getId(id:str)->dict:
-        '''Esta funcion nos permite devolver el pedido que tenemos dentro de nuestra base de datos para trabajar con el'''
-        pass
     
     def addProduct(idProduct:str):
         '''Esta funcion nos permiteagregar un nuevo producto a nuestro pedido actual.
@@ -17,7 +13,7 @@ class ServiceOrder():
         pass
 
     def addUnitProduct():
-
+        '''Esta clase permite agregar una unidad mas a un producto especifico que tenemos en nuestro pedido'''
         pass
 
     def deleteUnitProduct():

@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 class Service(ABC):
     
     @abstractmethod
-    def getAll(specificData:list)->list:
+    def getAll(clasification:str)->list:
         '''Esta funcion nos permite obtener todos las instancias de un tipo especifico, siendo asi adaptable para usuarios
         y productos.
         

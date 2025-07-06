@@ -6,6 +6,15 @@ from service.usersService import UserService
 class ProductService(Service):
     # --- Herencia de Service --- ⚙️
     @staticmethod
+    def getAll(type:str):
+        data = utils.getDataBase("./Data/products.json")
+        try :
+            specifiData =  data.get(type)
+            return specifiData
+        except Exception:
+            raise Exception("no se pudo encontrar la clasificacion de la base de datos que se desea mostrar")
+
+    @staticmethod
     def getId(id:str)->dict:
         
         data = utils.getDataBase("./Data/products.json")
