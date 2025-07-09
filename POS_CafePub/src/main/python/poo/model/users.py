@@ -12,10 +12,10 @@ class Users():
                 if rank == 0:
                     self.__password = ""
                 else:
-                    if UserService.newPasswordValidation("",password):
+                    if UserService.passwordValidation(password):
                         self.__password = utils.encryptString(password).decode()
         except ValueError as error :
-            print(f"Error: {error}")
+            raise error
 
     @staticmethod
     def fromJson(jsonData):#fundamental!!, la informacion del usuario debe ser ingresada en texto plano desde el frontEnd para ser encryptada por el backend
@@ -47,7 +47,7 @@ class Users():
                 if  UserService.rankValidation(newRank):
                     self.__rank = newRank
         except ValueError as error:
-            print(f"Error: {error}")
+            raise error
     
     def getPassword(self, currentUser):
         try:
@@ -64,5 +64,5 @@ class Users():
                 if UserService.newPasswordValidation(self.__password, newPassword): #Si la contraseña cumple con los estandares se aplica el cambio
                     self.__password = utils.encryptString(newPassword)
             except ValueError as error:
-                print(f"Error : {error}")
+                raise error
                 

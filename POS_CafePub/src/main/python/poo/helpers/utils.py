@@ -4,6 +4,9 @@ import os
 import string
 import random
 
+ROJO = "\033[31m"
+RESET = "\033[0m"
+
 def getDataBase(path:str)->dict:
     try:
         with open(path,"r") as file:
@@ -29,6 +32,7 @@ def safetysave(path, data)->None: #Esta funcion genera un archivo temporal con l
             json.dump(data, temp_File, indent=4)
 
         os.replace(tempPath, path)#remplazamos el archivo original por el temporal, si no hay errores
+        
 
     except Exception as error:
         if os.path.exists(tempPath): #Si en algun momento se llego a generar el archivo pero aun asi salio algo mal, se elimina
@@ -47,3 +51,8 @@ def randomString(length:int) ->str:
     caracteres = string.ascii_uppercase  # Solo A-Z
     resultado = ''.join(random.choice(caracteres) for _ in range(length))
     return resultado
+
+def showTraceError(exception : Exception):
+    print(f"{ROJO} ------- REPORTE DE EXCEPCIONES ------- {RESET}")
+    print(exception)
+    print(f"{ROJO} ------- FIN DEL REPORTE DE EXCEPCIONES -------{RESET}")

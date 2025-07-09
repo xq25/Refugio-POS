@@ -54,3 +54,5 @@ class Snacks(Products):
         return self._file
     def setFile(self, newFile):
         super().setFile(newFile)
+
+        

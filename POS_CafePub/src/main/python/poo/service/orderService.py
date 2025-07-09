@@ -1,6 +1,7 @@
 from service.serviceOrder import ServiceOrder
 from service.productsService import ProductService
 from helpers import utils
+
 class OrderService(ServiceOrder):
 
     @staticmethod
@@ -9,22 +10,40 @@ class OrderService(ServiceOrder):
         product = ProductService.getId(idProduct)
         productFormat = OrderService.formatProductInfo(product) #La cantidad predeterminada al agregar un producto es 1
         order.append(productFormat)
+
         return order
     
     @staticmethod
     def deleteProduct(order:list, id:str)->list:
-        index = OrderService.getIndexProductInOrder(order, id)
-        order.pop(index)
+        indexDelete = OrderService.getIndexProductInOrder(order, id)
+        order.pop(indexDelete)
+
         return order
 
     @staticmethod
-    def addUnitProduct():
+    def addUnitProduct(order:list, idProduct:str)->list:
         #aumentar la cantidad en un producto que ya esta en el pedido
-        pass
+        indexUpdate = OrderService.getIndexProductInOrder(order, idProduct)
+        info = OrderService.getProductInOrder(order,idProduct)
+        info["count"] += 1 
+        order[indexUpdate] = info
+
+        return order
 
     @staticmethod
-    def deleteUnitProduct():
+    def deleteUnitProduct(order:list, idProduct:str)->list:
         #Bajar la cantidad de un producto que esta en el pedido
+        info = OrderService.getProductInOrder(order, idProduct)
+
+        if info.get("count") == 1:
+            order = OrderService.deleteProduct(order, idProduct)
+        else:
+            info["count"] -= 1
+            indexUpdate = OrderService.getIndexProductInOrder(order, idProduct)
+            order[indexUpdate] = info
+
+        return order
+
 
         #Si la cantidad llega a 0, eliminarlo del pedido
         pass
@@ -51,3 +70,6 @@ class OrderService(ServiceOrder):
     def formatProductInfo(infoProduct:dict)->dict: #Aqui enviamos los datos que nos interesan del producto para tener en nuestro pedido
         return {"id": infoProduct.get("id"), "name": infoProduct.get("name"), "price": infoProduct.get("price"), "count" : 1}
         
+    @staticmethod
+    def productCost(order, idProductPay, count):
+        pass

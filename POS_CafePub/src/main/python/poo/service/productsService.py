@@ -6,13 +6,13 @@ from service.usersService import UserService
 class ProductService(Service):
     # --- Herencia de Service --- ⚙️
     @staticmethod
-    def getAll(type:str):
+    def getAll(type:str)->dict:
         data = utils.getDataBase("./Data/products.json")
         try :
             specifiData =  data.get(type)
-            return specifiData
+            return {"status": "success", "message": f"Se cargo con exito la base de datos de {type}", "data" : specifiData}
         except Exception:
-            raise Exception("no se pudo encontrar la clasificacion de la base de datos que se desea mostrar")
+            raise Exception(f"no se pudo encontrar la clasificacion: {type}, dentro de la base de datos")
 
     @staticmethod
     def getId(id:str)->dict:
@@ -21,35 +21,41 @@ class ProductService(Service):
         type = id[:2]
         key = ProductService.clasificator(type)
         specificData = data.get(f"{key}")
+        info = None
 
         for p in specificData:
             if p.get("id") == id:
-                return p
-        raise ValueError(f"No se logro encontrar el producto con id: {id}")
+                info = p
+        if info is not None:
+            return info
+        else:
+            raise ValueError(f"No se logro encontrar el producto con id: {id}")
 
     @staticmethod
-    def add(productData:dict)->None:
+    def add(productData:dict)->dict:
         data = utils.getDataBase("./Data/products.json")
 
         #clasificamos el tipo de producto
         try: 
+            jsonCorrection = ProductService.dataToAddOk(productData)
             key = ProductService.clasificator(productData.get("type"))
             specificData = data.get(f"{key}") #specificData es la base de datos segun la clasificacion de la instacia a la que se hafce referencia
             specificData.append(productData) 
             data[key] = specificData
 
             utils.safetysave("./Data/products.json", data)
+            return {"status" : "succcess", "message" : "Se agrego el producto con exito!", "data": jsonCorrection}
 
         except ValueError as error:
             raise error
     
     @staticmethod
-    def delete(id:str, currentUser:dict)->None:
-        info = ProductService.getId(id)
+    def delete(id:str, currentUser:dict)->dict:
+        productDelete = ProductService.getId(id)
         data = utils.getDataBase("./Data/products.json")
 
         if UserService.hierarchiesValidation(currentUser):
-            if info:
+            if productDelete:
                 key = ProductService.clasificator(id[:2])
                 specificData = data.get(f"{key}")
                 deleteIndex = ProductService.getIndexProductId(id)  
@@ -57,9 +63,10 @@ class ProductService(Service):
                 data[f"{key}"] = specificData
 
                 utils.safetysave("./Data/products.json",data)
+                return {"status" : "success", "message": f"Se elimino con exito el producto {id}!", "data": productDelete}
             
     @staticmethod
-    def update(id:str, newJsonData:dict)->None:
+    def update(id:str, newJsonData:dict)->dict:
         #Primera prueba sin realizar validaciones en esta parte del service y sin validar los privilegios del usuario
         data = utils.getDataBase("./Data/products.json")
         indexUpdate = ProductService.getIndexProductId(id) 
@@ -70,6 +77,7 @@ class ProductService(Service):
         data[f"{key}"] = specificData
 
         utils.safetysave("./Data/products.json", data)
+        return {"status": "success", "message": f"Se actualizo el producto {id} con exito!", "data" : newJsonData}
 
     @staticmethod
     def assingId(type:str)->str:
@@ -82,9 +90,26 @@ class ProductService(Service):
     # --- Validaciones --- ✅❌
 
     @staticmethod
+    def dataToAddOk(jsonData:dict)->dict:
+        if "id" not in jsonData :
+            jsonData["id"] = ProductService.assingId(jsonData.get("type"))
+        try:
+            ProductService.idValidation(jsonData.get("id"))
+            ProductService.nameValidation(jsonData.get("name"))
+            ProductService.priceValidation(jsonData.get("price"))
+            
+            if "items" in jsonData:
+                ProductService.itemsValidation(jsonData.get("items"))
+
+            return jsonData
+        
+        except ValueError as e:
+            raise e
+
+    @staticmethod
     def idValidation(id:str)->bool:
         if len(id) != 5:
-            raise ValueError("ID invalida, la ID del prodcuto debe tener un tamaño de 5 caracteres")
+            raise ValueError("ID invalida, la ID del producto debe tener un tamaño de 5 caracteres")
         
         if utils.stringValidation(id):
             return True

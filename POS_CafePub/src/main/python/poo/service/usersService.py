@@ -8,6 +8,14 @@ import bcrypt
 
 class UserService(Service):
     # --- Herencia de Service --- ⚙️
+
+    @staticmethod
+    def getAll()->dict:
+        dataBase = utils.getDataBase("./Data/users.json")
+        data = dataBase.get("4dm1n") + dataBase.get("general")
+
+        return {"status": "success","message" : "Se cargo de manera exitosa la base de datos!", "data" : data}
+        
     @staticmethod
     def getId(user_id)->dict:
         data = utils.getDataBase("./Data/users.json")  #Base de datos general
@@ -16,39 +24,48 @@ class UserService(Service):
         only_admins = data.get("4dm1n", []) #Lista de diccionarios con informacion de los administradores 
         only_employees = data.get("general", []) # lista de diccionarios con la informacion de todods los empleados
 
+        info = None
         # Buscar desarrollador (tiene prioridad si coincide el id)
         if developer and developer.get("id") == user_id:
-            return developer
+            info = developer
 
         # Buscar entre admins
         elif user_id in admins_ids:
             for admin in only_admins:
                 if admin.get("id") == user_id:
-                    return admin
-
+                    info = admin
         else:
             # Buscar entre empleados
             for employee in only_employees:
                 if employee.get("id") == user_id:
-                    return employee
+                    info =  employee
 
-        # Si no se encuentra el usuario
-        raise ValueError(f"No se encontró el usuario con el ID: {user_id}")
+        if info is not None:
+            return info
+        else:# Si no se encuentra el usuario
+            raise ValueError(f"No se encontró el usuario con el ID: {user_id}")
     
     @staticmethod
-    def add(userJson:dict):
-        dataBase = utils.getDataBase("./Data/users.json")
-        userRank = userJson.get("rank")
+    #Todos nuestros metodos devuelven un diccionario aclarando si el procedimiento se pudo aplicar con exito
+    def add(userJson:dict)->dict:
+        try:
+            jsonCorrection = UserService.dataToAddOk(userJson)
 
-        key = UserService.clasificator(userRank)
-        specificData = dataBase.get(f"{key}")
-        specificData.append(userJson)
-        dataBase[f"{key}"] = specificData
+            dataBase = utils.getDataBase("./Data/users.json")
+            userRank = userJson.get("rank")
 
-        utils.safetysave("./Data/users.json", dataBase)
+            key = UserService.clasificator(userRank)
+            specificData = dataBase.get(f"{key}")
+            specificData.append(userJson)
+            dataBase[f"{key}"] = specificData
+
+            utils.safetysave("./Data/users.json", dataBase)
+            return {"message": "Usuario agregado con exito!", "data": jsonCorrection}
+        except ValueError as e:
+            raise e
 
     @staticmethod
-    def delete(userId, currentUser):
+    def delete(userId, currentUser)->dict:
 
         delete_user = UserService.getId(userId)
         if UserService.hierarchiesValidation(currentUser):
@@ -66,11 +83,12 @@ class UserService(Service):
 
                     dataBase[key] = deleteList
                     utils.safetysave("./Data/users.json",dataBase)
+                    return {"status": "success", "message": f"Usuario {userId} Eliminado con Exito!", "data": delete_user}
             else:
                 raise ValueError("El rango del usuario a eliminar esta por fuera de los parametros")
 
     @staticmethod
-    def update(userId:str, newJsonData:dict, currentUser:dict):
+    def update(userId:str, newJsonData:dict, currentUser:dict)->dict:
 
         currentInfo = UserService.getId(userId)
         currentRank = currentInfo.get("rank")
@@ -94,46 +112,75 @@ class UserService(Service):
 
                 data[f"{key}"] = specificData
                 utils.safetysave("./Data/users.json", data)
+                return {"status": "success", "message": f"El usuario {userId} fue actualizado con exito!", "data":  newJsonData}
                 
     @staticmethod
-    def assingId():
+    def assingId()->str:
         count = UserService.numberOfUsers() + 1
         id = utils.orderId(str(count)) 
 
         return id
   
     # --- Validaciones --- ✅❌
-    
     @staticmethod
-    def nameValidation(userName)->bool:
+    #Esta funcion nos corrige la informacion contenida dentro de nuestro json para asi evitar errores a la hora de ser almacenado
+    def dataToAddOk(jsonData)->dict:
+        if "id" not in jsonData or jsonData["id"] == "":
+            jsonData["id"] = UserService.assingId()
+        try:
+            UserService.nameValidation(jsonData.get("name"))
+            UserService.rankValidation(jsonData.get("rank"))
+            UserService.passwordValidation(jsonData.get("password"))
+            return jsonData
+        except ValueError as e:
+            raise e
+
+    @staticmethod
+    def nameValidation(userName:str)->bool:
         
         if len(userName) < 3 and len(userName) > 20:
             raise ValueError("El nombre del usuario debe ser de 3 a 20 caracteres")
         if utils.stringValidation(userName):
             return True
+    
     @staticmethod
-    def rankValidation(rank)->bool:
-        if 0 <= rank < 2:
-            return True
-        else:
+    def rankValidation(rank:int)->bool:
+        #Excepciones
+        if not isinstance(rank, int):
+            raise ValueError("El dato ingresado para el rango debe ser un valor numerico entero")
+        if rank < 0 or rank >1:
             raise ValueError("El rango ingresado es incorrecto, debe estar entre 0 y 1")
+        
+        return True
 
     @staticmethod
-    def newPasswordValidation(currentPassword,newPassword)->bool:
+    def passwordValidation(password):
         numValidation = False
-        if len(newPassword) < 6 :
+        if len(password) < 6 :
             raise ValueError("La contraseña debe tener al menos 6 caracteres")
         for i in range(10):
-            if str(i) in  newPassword:
+            if str(i) in  password:
                 numValidation = True
         if numValidation == False:
             raise ValueError("La contraseña debe tener al menos un numero entero")
-        if newPassword == currentPassword:
-            raise ValueError("Debes ingresar una contraseña diferente a la que ya tienes")
         return True
 
+    @staticmethod
+    def newPasswordValidation(currentPassword,newPassword)->bool:
+        
+        if newPassword == currentPassword:
+            raise ValueError("Debes ingresar una contraseña diferente a la que ya tienes")
+        try:
+            UserService.passwordValidation(newPassword)
+            return True
+        except ValueError as e:
+            raise e
+            
     @staticmethod   
     def hierarchiesValidation(currentUser)->bool:
+        '''Esta funcion nos permite validar si el usuario tiene el rango o privilegios requeridos
+        para realizar cambios sobre los productos.'''
+
         currentUserRank = currentUser.get("rank")
         if currentUserRank!= 1 and currentUserRank != 2:
             raise ValueError(f"El usuario {currentUser.get("id")} no tiene acceso!")
@@ -142,6 +189,9 @@ class UserService(Service):
 
     @staticmethod
     def accessInfoValidation(idAcces:str, currentUser:dict)->bool:
+        '''Esta funcion nos permite saber si el usuario actual tiene acceso sobre
+        la informacion especifica de un usuario'''
+
         #idAcces es el id de la instancia sobre la cual queremos acceder o modificar
         if UserService.hierarchiesValidation(currentUser) or currentUser.get("id")== idAcces:
             return True
@@ -149,7 +199,10 @@ class UserService(Service):
             raise PermissionError("No cuentas con los privilegios para acceder a esta informacion")
 
     @staticmethod 
-    def changeRankValidation(currentRank, newRank):
+    def changeRankValidation(currentRank:int, newRank:int):
+        '''Esta funcion es util para com parar si un rango cambio durante un proceso de actualizacion(update)
+        para asi realizar otras validaciones'''
+
         if newRank != currentRank:
             return True
         else:
@@ -161,10 +214,9 @@ class UserService(Service):
         hashSave = userInfo.get("password").encode() #encode convierte nuestro string en una cadena de bits
         
         if bcrypt.checkpw(passwordUser.encode(), hashSave):  #Validamos que la contra ingresada por el usuario al momento de ser codificada nos da una igualdad o similitud con el hash que teniamos en la base de datos
-            response = True
             print(" --- Acceso concedido --- ")
             print(f" --- Bienvenido Usuario {userInfo.get("name")} --- ")
-            return response
+            return True
         else:
             raise ValueError("La contraseña ingresada es incorrecta!")
 
@@ -180,7 +232,7 @@ class UserService(Service):
         return idList
     
     @staticmethod
-    def getIndexUserId(user_id:str, rank:int)->int:#Terminar!!
+    def getIndexUserId(user_id:str, rank:int)->int:
         data = utils.getDataBase("./Data/users.json")
         rank_Key = ""
         userInfo = UserService.getId(user_id)
