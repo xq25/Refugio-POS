@@ -3,6 +3,7 @@ from service.productsService import ProductService
 from helpers import utils
 
 class OrderService(ServiceOrder):
+    #Herencia del Service Order
 
     @staticmethod
     def addProduct(order:list,idProduct:str)->list:
@@ -51,7 +52,8 @@ class OrderService(ServiceOrder):
     @staticmethod
     def getCosto():
         pass
-
+    
+    # --- Herramientas Utiles --- 
     @staticmethod
     def getProductInOrder(order, id)->dict:
         for info in order:

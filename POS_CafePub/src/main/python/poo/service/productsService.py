@@ -1,6 +1,12 @@
 from helpers import utils
 from service.service import Service
 from service.usersService import UserService
+from model.beers import Beers
+from model.cocktails import Cocktails
+from model.drinks import Drinks
+from model.foods import Foods
+from model.snacks import Snacks
+from model.products import Products
 
 
 class ProductService(Service):
@@ -37,11 +43,14 @@ class ProductService(Service):
 
         #clasificamos el tipo de producto
         try: 
-            jsonCorrection = ProductService.dataToAddOk(productData)
-            key = ProductService.clasificator(productData.get("type"))
-            specificData = data.get(f"{key}") #specificData es la base de datos segun la clasificacion de la instacia a la que se hafce referencia
-            specificData.append(productData) 
-            data[key] = specificData
+            product_Class = ProductService.clasificator(productData.get("type"))
+            product = product_Class.fromJson(productData).to
+
+            jsonCorrection = ProductService.dataToAddOk(product.toJson())
+            
+            specificData = data.get(f"{product_Class}") #specificData es la base de datos segun la clasificacion de la instacia a la que se hafce referencia
+            specificData.append(jsonCorrection) 
+            data[product_Class] = specificData
 
             utils.safetysave("./Data/products.json", data)
             return {"status" : "succcess", "message" : "Se agrego el producto con exito!", "data": jsonCorrection}
@@ -89,54 +98,22 @@ class ProductService(Service):
     
     # --- Validaciones --- ✅❌
 
-    @staticmethod
+    @staticmethod#corregirn el data to add ok de todas las service
     def dataToAddOk(jsonData:dict)->dict:
         if "id" not in jsonData :
             jsonData["id"] = ProductService.assingId(jsonData.get("type"))
         try:
-            ProductService.idValidation(jsonData.get("id"))
-            ProductService.nameValidation(jsonData.get("name"))
-            ProductService.priceValidation(jsonData.get("price"))
-            
-            if "items" in jsonData:
-                ProductService.itemsValidation(jsonData.get("items"))
+            if not "items" in jsonData: 
+                jsonData["items"] = False
 
             return jsonData
         
         except ValueError as e:
             raise e
 
-    @staticmethod
-    def idValidation(id:str)->bool:
-        if len(id) != 5:
-            raise ValueError("ID invalida, la ID del producto debe tener un tamaño de 5 caracteres")
-        
-        if utils.stringValidation(id):
-            return True
-
-    @staticmethod 
-    def nameValidation(name:str)->bool:
-        if len(name)<3 and len(name) > 30:
-            raise ValueError("El nombre del producto debe ser de al menos 3 caracteres y maximo 30")
-        if utils.stringValidation(name):
-            return True
-
-    @staticmethod
-    def priceValidation(price:int)->bool:
-        if  not isinstance (price,int):
-            raise ValueError("El precio debe estar en pesos colombianos y debe ser ingresado en valor numerico entero")
-        return True
-
-    @staticmethod
-    def itemsValidation(items:dict)->bool:
-        if not items:
-            raise ValueError("Cargue la lista de elementos necesarios para realizar este producto")
-        if not isinstance(items, dict):
-            raise ValueError("El formato de carga debe ser un diccionario o un json")
-
     # --- Herramientas Utiles ---
     @staticmethod
-    def clasificator(type:str)->str:
+    def clasificator(type:str)->any:
         key = ""
         if type == "BR":
             key = "Beers"

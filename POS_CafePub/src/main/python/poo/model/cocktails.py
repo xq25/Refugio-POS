@@ -1,19 +1,24 @@
 import json
 from model.products import Products
-from service.productsService import ProductService as Ps
+from helpers import utils
+from model.mixers import Mixers
 
 class Cocktails(Products):
-    def __init__(self, name, price,  file, principal:str, base:str, infusion:bool, items:dict, type="CT", id = Ps.assingId("CT")):
+    def __init__(self,id,  name, price,  file, principal:str, mixers:list, infusion:bool, items:dict, type="CT"):
         super()._init_(id,name, price, type, file)
         self.__items = items #Diccionario con las cantidades de productos que lleva cada producto
-        self.__principal = principal #Licor predominante en el coctel (principal)
-        self.__base = base #Puede ser la principal combinacion (Limon, Bretaña, Naranja)
-        self.__infusion = infusion #Tiene o no tiene alguna infusion
+
+        if utils.stringValidation(principal):
+            self.__principal = principal #Licor predominante en el coctel (principal)
+
+        self.__mixers = mixers 
+        if utils.boolValidation(infusion):
+            self.__infusion = infusion #Tiene o no tiene alguna infusion
 
     @staticmethod
     def fromJson(jsonData):
         info = json.loads(jsonData)
-        Cocktails(info.get("name"), info.get("price"), info.get("file"), info.get("principal"), info.get("base"), info.get("infusion"),info.get("items"))
+        Cocktails(info.get("id"), info.get("name"), info.get("price"), info.get("file"), info.get("principal"), info.get("base"), info.get("infusion"),info.get("items"))
 
     def toJson(self):
         return {"id": self._id,
@@ -33,9 +38,9 @@ class Cocktails(Products):
         self.__principal = newPrincipal
     
     def getBase(self):
-        return self.__base
-    def setBase(self, newBase):
-        self.__base = newBase
+        return self.__mixers
+    def setBase(self, newMixers:list):
+        self.__mixers = newMixers
 
     def getHasInfusion(self):
         return self.__infusion 

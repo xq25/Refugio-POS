@@ -1,6 +1,7 @@
 from helpers import utils
 from service.service import Service
 import bcrypt
+from model.users import Users
 
 # --- Nota ---‼️
 #   CurrentUser es un diccionario con toda la informacion de un usuario. Sobre el cual tenemos acceso despues de loggearnos de manera adecuada y correcta con un usuario
@@ -49,18 +50,22 @@ class UserService(Service):
     #Todos nuestros metodos devuelven un diccionario aclarando si el procedimiento se pudo aplicar con exito
     def add(userJson:dict)->dict:
         try:
-            jsonCorrection = UserService.dataToAddOk(userJson)
+            if not "id" in userJson:
+                userJson["id"] = UserService.assingId()
 
+            user = Users.fromJson(userJson).toJson()
+            
             dataBase = utils.getDataBase("./Data/users.json")
-            userRank = userJson.get("rank")
+            userRank = user.get("rank")
 
             key = UserService.clasificator(userRank)
+
             specificData = dataBase.get(f"{key}")
-            specificData.append(userJson)
+            specificData.append(user)
             dataBase[f"{key}"] = specificData
 
             utils.safetysave("./Data/users.json", dataBase)
-            return {"message": "Usuario agregado con exito!", "data": jsonCorrection}
+            return {"message": "Usuario agregado con exito!", "data": user}
         except ValueError as e:
             raise e
 
@@ -122,49 +127,6 @@ class UserService(Service):
         return id
   
     # --- Validaciones --- ✅❌
-    @staticmethod
-    #Esta funcion nos corrige la informacion contenida dentro de nuestro json para asi evitar errores a la hora de ser almacenado
-    def dataToAddOk(jsonData)->dict:
-        if "id" not in jsonData or jsonData["id"] == "":
-            jsonData["id"] = UserService.assingId()
-        try:
-            UserService.nameValidation(jsonData.get("name"))
-            UserService.rankValidation(jsonData.get("rank"))
-            UserService.passwordValidation(jsonData.get("password"))
-            return jsonData
-        except ValueError as e:
-            raise e
-
-    @staticmethod
-    def nameValidation(userName:str)->bool:
-        
-        if len(userName) < 3 and len(userName) > 20:
-            raise ValueError("El nombre del usuario debe ser de 3 a 20 caracteres")
-        if utils.stringValidation(userName):
-            return True
-    
-    @staticmethod
-    def rankValidation(rank:int)->bool:
-        #Excepciones
-        if not isinstance(rank, int):
-            raise ValueError("El dato ingresado para el rango debe ser un valor numerico entero")
-        if rank < 0 or rank >1:
-            raise ValueError("El rango ingresado es incorrecto, debe estar entre 0 y 1")
-        
-        return True
-
-    @staticmethod
-    def passwordValidation(password):
-        numValidation = False
-        if len(password) < 6 :
-            raise ValueError("La contraseña debe tener al menos 6 caracteres")
-        for i in range(10):
-            if str(i) in  password:
-                numValidation = True
-        if numValidation == False:
-            raise ValueError("La contraseña debe tener al menos un numero entero")
-        return True
-
     @staticmethod
     def newPasswordValidation(currentPassword,newPassword)->bool:
         

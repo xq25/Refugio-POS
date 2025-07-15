@@ -1,10 +1,9 @@
 import json
 from model.products import Products
-from service.productsService import ProductService as Ps
 
 class Snacks(Products):
 
-    def __init__(self, name:str, price:int, file:str, principal:str,sweet:bool, type = "SK", id = Ps.assingId("SK")):
+    def __init__(self, id, name:str, price:int, file:str, principal:str,sweet:bool, type = "SK"):
         super().__init__(id, name, price, type, file)
         self.__principal = principal.capitalize()
         self.__sweet = sweet
@@ -12,7 +11,7 @@ class Snacks(Products):
     @staticmethod
     def fromJson(jsonData):
         info = json.loads(jsonData)
-        Snacks(info.get("name"),info.get("price"), info.get("file"),info.get("principal"),info.get("sweet"))
+        Snacks(info.get("id"),info.get("name"),info.get("price"), info.get("file"),info.get("principal"),info.get("sweet"))
 
     def toJson(self):
         return {"id": self._id,

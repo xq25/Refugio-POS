@@ -1,15 +1,15 @@
 import json
 from abc import ABC, abstractmethod
-from service.productsService import ProductService
+from helpers import utils
 
 class Products(ABC):
     def __init__(self,id:str, name:str, price:int, type:str, file:str):
         try: 
-            if ProductService.idValidation(id):
+            if Products.idValidation(id):
                 self._id = id
-            if ProductService.nameValidation(name):
+            if Products.nameValidation(name):
                 self._name = name.capitalize()
-            if ProductService.priceValidation(price):
+            if Products.priceValidation(price):
                 self._price = price
         except Exception as error:
             raise error
@@ -27,14 +27,16 @@ class Products(ABC):
         return self._name
     @abstractmethod
     def setName(self,newName):
-        self._name = newName
+        if Products.nameValidation(newName):
+            self._name = newName
 
     @abstractmethod
     def getPrice(self):
         return self._price
     @abstractmethod
     def setPrice(self, newPrice):
-        self._price = newPrice
+        if Products.priceValidation(newPrice):
+            self._price = newPrice
 
     @abstractmethod
     def getType(self):
@@ -47,3 +49,31 @@ class Products(ABC):
     @abstractmethod
     def setFile(self, newFile):
         self._file = newFile
+
+    @staticmethod
+    def idValidation(id:str)->bool:
+        if len(id) != 5:
+            raise ValueError("ID invalida, la ID del producto debe tener un tamaño de 5 caracteres")
+        
+        if utils.stringValidation(id):
+            return True
+
+    @staticmethod 
+    def nameValidation(name:str)->bool:
+        if len(name)<3 and len(name) > 30:
+            raise ValueError("El nombre del producto debe ser de al menos 3 caracteres y maximo 30")
+        if utils.stringValidation(name):
+            return True
+
+    @staticmethod
+    def priceValidation(price:int)->bool:
+        if  not isinstance (price,int):
+            raise ValueError("El precio debe estar en pesos colombianos y debe ser ingresado en valor numerico entero")
+        return True
+
+    @staticmethod
+    def itemsValidation(items:dict)->bool:
+        if not items:
+            raise ValueError("Cargue la lista de elementos necesarios para realizar este producto")
+        if not isinstance(items, dict):
+            raise ValueError("El formato de carga debe ser un diccionario o un json")

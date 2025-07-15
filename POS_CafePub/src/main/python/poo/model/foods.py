@@ -1,18 +1,21 @@
 import json
 from model.products import Products #clase madre
-from service.productsService import ProductService as Ps
+from helpers import utils
 
 class Foods(Products):
-    def __init__(self, name:str, price:int,  file:str, principal:str, sweet:bool, items:dict,  type = "FD",id = Ps.assingId("FD")):
+    def __init__(self, id, name:str, price:int,  file:str, principal:str, sweet:bool, items:dict,  type = "FD"):
         super().__init__(id,name, price, type, file)
-        self.__items = items
-        self.__principal = principal   #Elemento principal de esa comida
-        self.__sweet = sweet #Comida dulce?
+        if Products.itemsValidation(items):
+            self.__items = items
+        if utils.stringValidation(principal):
+            self.__principal = principal   #Elemento principal de esa comida
+        if utils.boolValidation(sweet):
+            self.__sweet = sweet #Comida dulce?
 
     @staticmethod
     def fromJson(jsonData):
         info = json.loads(jsonData)
-        Foods(info.get("name"),info.get("price"), info.get("file"),info.get("principal"),info.get("sweet"), info.get("items"))
+        Foods(info.get("id"),info.get("name"),info.get("price"), info.get("file"),info.get("principal"),info.get("sweet"), info.get("items"))
     
     def toJson(self):
         return {"id": self._id,

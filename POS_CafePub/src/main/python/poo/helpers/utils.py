@@ -39,7 +39,7 @@ def safetysave(path, data)->None: #Esta funcion genera un archivo temporal con l
             os.remove(tempPath)
         raise error  #Mostramos que fallo
 
-def stringValidation(string)->bool:
+def stringValidation(string:str)->bool:
     specialChars = "!@#$%^&*()_+-=[]/,.{}"
 
     for i in specialChars:
@@ -47,6 +47,10 @@ def stringValidation(string)->bool:
             raise ValueError(f"La cadena no puede contener caracteres especiales como : {i}")
     return True 
 
+def boolValidation(x:bool):
+    if not isinstance(x,bool):
+        raise ValueError("El dato ingresado debe ser un booleano (Verdadero o Falso)!")
+    return True
 def randomString(length:int) ->str:
     caracteres = string.ascii_uppercase  # Solo A-Z
     resultado = ''.join(random.choice(caracteres) for _ in range(length))

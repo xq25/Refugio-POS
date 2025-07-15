@@ -1,18 +1,22 @@
 import json
 from model.products import Products #clase madre
-from service.productsService import ProductService as Ps
+from helpers import utils
+from model.drinkBases import DrinksBases
 
 class Drinks(Products):
-    def __init__(self,name:str, price:int, file:str, hot:bool, base:str, items:dict, type = "DK", id = Ps.assingId("DK")):
+    def __init__(self, id, name:str, price:int, file:str, hot:bool, base:DrinksBases, items:dict, type = "DK"):
         super().__init__(id, name, price, type, file)
-        self.__items = items
-        self.__hot = hot
-        self.__base = base #Se refiere a la base de la bebida (Leche o Agua)
+        
+        if Products.itemsValidation(items):   
+            self.__items = items
+        if utils.boolValidation(hot): 
+            self.__hot = hot
+        self.__base = base #Se refiere a la base de la bebida 
 
     @staticmethod
     def fromJson (jsonData:dict):
         info = json.loads(jsonData)
-        Drinks(info.get("name"), info.get("price"),info.get("file"),info.get("hot"),info.get("base"), info.get("items"))
+        Drinks(info.get("id"), info.get("name"), info.get("price"),info.get("file"),info.get("hot"),info.get("base"), info.get("items"))
     
     def toJson(self):
         return {"id": self._id,
@@ -59,6 +63,8 @@ class Drinks(Products):
         return self.__items
     def setItems(self, newDict):
         self.__items = newDict
+
+    
 
 
 
