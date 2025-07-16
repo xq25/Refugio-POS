@@ -21,7 +21,7 @@ class Users():
         info = json.loads(jsonData) 
         Users(info.get("id"),info.get("name"),info.get("password"),info.get("rank"))
 
-    def toJson(self):
+    def toDict(self):
         return {"id": self.__id,
                 "name": self.__name, 
                 "password": self.__password, 

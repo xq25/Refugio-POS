@@ -20,7 +20,7 @@ class Cocktails(Products):
         info = json.loads(jsonData)
         Cocktails(info.get("id"), info.get("name"), info.get("price"), info.get("file"), info.get("principal"), info.get("base"), info.get("infusion"),info.get("items"))
 
-    def toJson(self):
+    def toDict(self):
         return {"id": self._id,
                 "name": self._name,
                 "price": self._price,

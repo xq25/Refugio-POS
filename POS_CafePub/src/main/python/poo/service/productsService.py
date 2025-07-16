@@ -7,6 +7,7 @@ from model.drinks import Drinks
 from model.foods import Foods
 from model.snacks import Snacks
 from model.products import Products
+import json
 
 
 class ProductService(Service):
@@ -38,26 +39,30 @@ class ProductService(Service):
             raise ValueError(f"No se logro encontrar el producto con id: {id}")
 
     @staticmethod
-    def add(productData:dict)->dict:
+    def add(jsonData)->dict:
         data = utils.getDataBase("./Data/products.json")
+        classes = [Beers, Cocktails, Drinks, Foods, Snacks]
+        infoJson = json.loads(jsonData)
 
         #clasificamos el tipo de producto
-        try: 
-            product_Class = ProductService.clasificator(productData.get("type"))
-            product = product_Class.fromJson(productData).to
-
-            jsonCorrection = ProductService.dataToAddOk(product.toJson())
+        productClass = ProductService.clasificator(infoJson.get("type"))
+        product = None
+        for i in classes:
             
-            specificData = data.get(f"{product_Class}") #specificData es la base de datos segun la clasificacion de la instacia a la que se hafce referencia
-            specificData.append(jsonCorrection) 
-            data[product_Class] = specificData
+            if i.__name__ == productClass:
+                product = i.fromJson(jsonData)
+
+        if product is not None:
+
+            specificData = data.get(f"{productClass}") #specificData es la base de datos segun la clasificacion de la instacia a la que se hafce referencia
+            specificData.append(product.toDict()) 
+            data[productClass] = specificData
 
             utils.safetysave("./Data/products.json", data)
-            return {"status" : "succcess", "message" : "Se agrego el producto con exito!", "data": jsonCorrection}
+            return {"status" : "succcess", "message" : "Se agrego el producto con exito!", "data": product.toDict()}
+        else:
+            raise TypeError("Error al instanciar el producto")
 
-        except ValueError as error:
-            raise error
-    
     @staticmethod
     def delete(id:str, currentUser:dict)->dict:
         productDelete = ProductService.getId(id)
@@ -75,18 +80,29 @@ class ProductService(Service):
                 return {"status" : "success", "message": f"Se elimino con exito el producto {id}!", "data": productDelete}
             
     @staticmethod
-    def update(id:str, newJsonData:dict)->dict:
+    def update(id:str, newJsonData)->dict:
+        classes = [Beers, Cocktails, Drinks, Foods, Snacks]
+        product = None
+
         #Primera prueba sin realizar validaciones en esta parte del service y sin validar los privilegios del usuario
         data = utils.getDataBase("./Data/products.json")
         indexUpdate = ProductService.getIndexProductId(id) 
         key = ProductService.clasificator(id[:2])
         specificData = data.get(f"{key}")
 
-        specificData[indexUpdate] = newJsonData 
-        data[f"{key}"] = specificData
+        for i in classes:
+            if i.__name__ == key:
+                product = i.fromJson(newJsonData)
 
-        utils.safetysave("./Data/products.json", data)
-        return {"status": "success", "message": f"Se actualizo el producto {id} con exito!", "data" : newJsonData}
+        if product is not None:
+
+            specificData[indexUpdate] = product.toDict() 
+            data[f"{key}"] = specificData
+
+            utils.safetysave("./Data/products.json", data)
+            return {"status": "success", "message": f"Se actualizo el producto {id} con exito!", "data" : product.toDict()}
+        else:
+            raise TypeError("Error al instanciar el producto con la nueva informacion")
 
     @staticmethod
     def assingId(type:str)->str:
@@ -98,22 +114,10 @@ class ProductService(Service):
     
     # --- Validaciones --- ✅❌
 
-    @staticmethod#corregirn el data to add ok de todas las service
-    def dataToAddOk(jsonData:dict)->dict:
-        if "id" not in jsonData :
-            jsonData["id"] = ProductService.assingId(jsonData.get("type"))
-        try:
-            if not "items" in jsonData: 
-                jsonData["items"] = False
-
-            return jsonData
-        
-        except ValueError as e:
-            raise e
 
     # --- Herramientas Utiles ---
     @staticmethod
-    def clasificator(type:str)->any:
+    def clasificator(type:str)->str:
         key = ""
         if type == "BR":
             key = "Beers"

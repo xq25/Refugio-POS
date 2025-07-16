@@ -13,7 +13,7 @@ class Snacks(Products):
         info = json.loads(jsonData)
         Snacks(info.get("id"),info.get("name"),info.get("price"), info.get("file"),info.get("principal"),info.get("sweet"))
 
-    def toJson(self):
+    def toDict(self):
         return {"id": self._id,
                 "name": self._name,
                 "price": self._price,

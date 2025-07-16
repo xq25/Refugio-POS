@@ -60,3 +60,6 @@ def showTraceError(exception : Exception):
     print(f"{ROJO} ------- REPORTE DE EXCEPCIONES ------- {RESET}")
     print(exception)
     print(f"{ROJO} ------- FIN DEL REPORTE DE EXCEPCIONES -------{RESET}")
+
+def toJSONObject(dictionary:dict):
+    return json.dumps(dictionary)

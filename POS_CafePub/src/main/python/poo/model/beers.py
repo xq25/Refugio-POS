@@ -12,7 +12,7 @@ class Beers(Products):
         info = json.loads(jsonData)
         Beers(info.get("id"),info.get("name"), info.get("price"),info.get("file"), info.get("color"), info.get("profile"))
 
-    def toJson(self):
+    def toDict(self):
         return {"id": self._id,
                 "name": self._name,
                 "price": self._price,

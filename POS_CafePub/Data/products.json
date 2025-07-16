@@ -1,7 +1,23 @@
 {
     "Beers": [],
     "Cocktails": [],
-    "Drinks": [],
+    "Drinks": [
+        {
+            "id": "CKR27",
+            "name": "Limonada natural",
+            "price": 7500,
+            "type": "DK",
+            "file": "",
+            "hot": false,
+            "base": [
+                "Limon",
+                "Agua"
+            ],
+            "items": {
+                "hola": "si"
+            }
+        }
+    ],
     "Foods": [],
     "Snacks": []
 }

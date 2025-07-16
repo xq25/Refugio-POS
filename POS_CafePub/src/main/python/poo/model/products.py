@@ -77,3 +77,4 @@ class Products(ABC):
             raise ValueError("Cargue la lista de elementos necesarios para realizar este producto")
         if not isinstance(items, dict):
             raise ValueError("El formato de carga debe ser un diccionario o un json")
+        return True
