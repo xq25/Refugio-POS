@@ -3,29 +3,28 @@ from model.products import Products #clase madre
 from helpers import utils
 
 class Foods(Products):
-    def __init__(self, id, name:str, price:int,  file:str, principal:str, sweet:bool, items:dict,  type = "FD"):
-        super().__init__(id,name, price, type, file)
-        if Products.itemsValidation(items):
-            self.__items = items
+    def __init__(self, id, name:str, price:int,  items:dict, principal:str, sweet:bool,  type = "FD"):
+        super().__init__(id,name, price, type, items)
+        
         if utils.stringValidation(principal):
             self.__principal = principal   #Elemento principal de esa comida
+
         if utils.boolValidation(sweet):
             self.__sweet = sweet #Comida dulce?
 
     @staticmethod
-    def fromJson(jsonData):
+    def fromJson(jsonData)->object:
         info = json.loads(jsonData)
-        Foods(info.get("id"),info.get("name"),info.get("price"), info.get("file"),info.get("principal"),info.get("sweet"), info.get("items"))
+        return Foods(info.get("id"),info.get("name"),info.get("price"), info.get("items"),info.get("principal"),info.get("sweet"))
     
     def toDict(self):
         return {"id": self._id,
                 "name": self._name,
                 "price": self._price,
                 "type": self._type,
-                "file": self._file,
                 "principal": self.getPrincipal(),
                 "sweet": self.getSweet(),
-                "items": self.getItems()}
+                "items": self._items}
     
     #Accesores y Mutadores
     def getPrincipal(self):
@@ -54,12 +53,7 @@ class Foods(Products):
     def getType(self):
         return self._type
 
-    def getFile(self):
-        return self._file
-    def setFile(self, newFile):
-        super().setFile(newFile)
-
     def getItems(self):
-        return self.__items
+        return self._items
     def setItems(self, newDict):
-        self.__items = newDict
+        super().setItems(newDict)

@@ -1,26 +1,31 @@
 import json
 from model.products import Products
+from helpers import utils
 
 class Snacks(Products):
 
-    def __init__(self, id, name:str, price:int, file:str, principal:str,sweet:bool, type = "SK"):
-        super().__init__(id, name, price, type, file)
-        self.__principal = principal.capitalize()
-        self.__sweet = sweet
+    def __init__(self, id, name:str, price:int, principal:str,sweet:bool, type = "SK", items = "N/A"):
+        super().__init__(id, name, price, type, items)
+
+        if utils.stringValidation(principal):
+            self.__principal = principal.capitalize()
+
+        if utils.boolValidation(sweet):
+            self.__sweet = sweet
     
     @staticmethod
-    def fromJson(jsonData):
+    def fromJson(jsonData)->object:
         info = json.loads(jsonData)
-        Snacks(info.get("id"),info.get("name"),info.get("price"), info.get("file"),info.get("principal"),info.get("sweet"))
+        return Snacks(info.get("id"),info.get("name"),info.get("price"),info.get("principal"),info.get("sweet"))
 
     def toDict(self):
         return {"id": self._id,
                 "name": self._name,
                 "price": self._price,
                 "type": self._type,
-                "file": self._file,
                 "principal": self.getPrincipal(),
-                "sweet": self.getSweet()}
+                "sweet": self.getSweet(), 
+                "items" : self._items}
     
     #Accesores y Mutadores
     def getPrincipal(self):

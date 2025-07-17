@@ -2,24 +2,24 @@ import json
 from model.products import Products
 
 class Beers(Products):
-    def __init__(self, id, name:str, price:int, file:str, color:str, profile:str, type = "BR"):
-        super().__init__(id, name, price, type, file)
+    def __init__(self, id, name:str, price:int, color:str, profile:str, type = "BR", items = "N/A"):
+        super().__init__(id, name, price, type, items)
         self.__color = color #Tipo de cerveza (Roja, Negra, Dorada)
         self.__profile = profile # Se centra principalmente en (Dulce, Amargo, Aroma, Etc)
 
     @staticmethod
-    def fromJson(jsonData):
+    def fromJson(jsonData)-> object:
         info = json.loads(jsonData)
-        Beers(info.get("id"),info.get("name"), info.get("price"),info.get("file"), info.get("color"), info.get("profile"))
+        return Beers(info.get("id"),info.get("name"), info.get("price"), info.get("color"), info.get("profile"))
 
     def toDict(self):
         return {"id": self._id,
                 "name": self._name,
                 "price": self._price,
                 "type": self._type,
-                "file": self._file,
                 "color" : self.getColor(),
-                "profile" : self.getProfile()}
+                "profile" : self.getProfile().capitalize,
+                "items" : self._items}
     
     # --- Accesores y Mutadores ---
     def getId(self):
@@ -48,7 +48,7 @@ class Beers(Products):
     def getType(self):
         return self._type
 
-    def getFile(self):
-        return self._file
-    def setFile(self, newFile):
-        super().setFile(newFile)
+    def getItems(self):
+        return self._items
+    def setItems(self, newItems):
+        super().setItems(newItems)

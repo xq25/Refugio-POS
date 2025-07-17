@@ -4,40 +4,40 @@ from helpers import utils
 from model.drinkBases import DrinksBases
 
 class Drinks(Products):
-    def __init__(self, id, name:str, price:int, file:str, hot:bool, base:DrinksBases, items:dict, type = "DK"):
-        super().__init__(id, name, price, type, file)
-        if Products.itemsValidation(items):   
-            self.__items = items
+    def __init__(self, id, name:str, price:int, items:dict, hot:bool, base:DrinksBases,  type = "DK"):
+        super().__init__(id, name, price, type, items)
+
         if utils.boolValidation(hot): 
             self.__hot = hot
-        self.__base = base #Se refiere a la base de la bebida 
+
+        self.__base = Drinks.baseClasification(base)
 
     @staticmethod
-    def fromJson (jsonData):
+    def fromJson (jsonData)->object:
         #transformamos el json en un diccionario
         info = json.loads(jsonData)
-        return Drinks(info.get("id"), info.get("name"), info.get("price"),info.get("file"),info.get("hot"),info.get("base"), info.get("items"))
+        return Drinks(info.get("id"), info.get("name"), info.get("price"),info.get("items"),info.get("hot"),info.get("base"))
     
     def toDict(self)->dict:
-        info = {"id": self._id,
+        return {"id": self._id,
                 "name": self._name,
                 "price": self._price,
                 "type": self._type,
-                "file": self._file,
-                "hot": self.__hot,
-                "base": self.__base,
-                "items": self.__items}
-        return info
+                "hot": self.getIsHot(),
+                "base": self.getBase().value,
+                "items": self._items}
+    
     #Accesores y mutadores
     def getIsHot(self):
         return self.__hot
     def setIsHot(self, newValue:bool):
-        self.__hot = newValue
+        if utils.boolValidation(newValue):
+            self.__hot = newValue
 
     def getBase(self):
         return self.__base
     def setBase(self, newBase):
-        self.__base = newBase
+        self.__base = Drinks.baseClasification(newBase)
 
     def getId(self):
         return self._id
@@ -55,18 +55,24 @@ class Drinks(Products):
     def getType(self):
         return self._type
 
-    def getFile(self):
-        return self._file
-    def setFile(self, newFile):
-        super().setFile(newFile)
-
     def getItems(self):
         return self.__items
-    
     def setItems(self, newDict):
         self.__items = newDict
 
-    
+    @staticmethod 
+    def baseClasification(base):
+        if isinstance(base, str):
+            try:
+                value =  DrinksBases(base)
+            except ValueError:
+                raise ValueError(f"{base} no existe en la lista de las posibles bases de la bebida!")
+        elif isinstance(base, DrinksBases):
+            value = base
+        else:
+            raise ValueError("Ingresa un valor DrinkBase Valido")
+        
+        return value
 
 
 

@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from helpers import utils
 
 class Products(ABC):
-    def __init__(self,id:str, name:str, price:int, type:str, file:str):
+    def __init__(self,id:str, name:str, price:int, type:str, items:dict):
         try: 
             if Products.idValidation(id):
                 self._id = id
@@ -11,10 +11,12 @@ class Products(ABC):
                 self._name = name.capitalize()
             if Products.priceValidation(price):
                 self._price = price
+            if Products.itemsValidation(items):
+                self._items = items
+                
         except Exception as error:
             raise error
         self._type = type
-        self._file = file
         
     #Accesores y Mutadores
     @abstractmethod
@@ -44,11 +46,11 @@ class Products(ABC):
     #No se puede cambiar el tipo de un producto despues de ya ser asignado
     
     @abstractmethod
-    def getFile(self):
+    def getItems(self):
         return self._file
     @abstractmethod
-    def setFile(self, newFile):
-        self._file = newFile
+    def setItems(self, newItems):
+        self._items = newItems
 
     @staticmethod
     def idValidation(id:str)->bool:
@@ -75,6 +77,6 @@ class Products(ABC):
     def itemsValidation(items:dict)->bool:
         if not items:
             raise ValueError("Cargue la lista de elementos necesarios para realizar este producto")
-        if not isinstance(items, dict):
-            raise ValueError("El formato de carga debe ser un diccionario o un json")
+        if not isinstance(items, dict) and items != "N/A":
+            raise ValueError("El formato de carga debe ser un diccionario o especificar que no tiene (N/A)")
         return True
